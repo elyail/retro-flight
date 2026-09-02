@@ -1,0 +1,703 @@
+<title>Ретро-рейс</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@600&display=swap">
+<style>
+  :root {
+    --ground: #EDF1F5;
+    --surface: #FFFFFF;
+    --surface-2: #F6F9FB;
+    --ink: #0F1A24;
+    --muted: #64798B;
+    --line: #D8E1E9;
+    --line-soft: #E7EDF2;
+    --accent: #0B63C5;
+    --accent-soft: #E2EDFB;
+    --hot: #D9551F;
+    --hot-soft: #FBE9E0;
+    --shadow: 0 1px 2px rgba(15,26,36,.06), 0 8px 24px rgba(15,26,36,.05);
+    --display: "Unbounded", "Trebuchet MS", sans-serif;
+    --body: "Golos Text", "Segoe UI", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0C131A;
+      --surface: #151F29;
+      --surface-2: #1A2632;
+      --ink: #E9EFF5;
+      --muted: #94A6B6;
+      --line: #2A3846;
+      --line-soft: #212D39;
+      --accent: #5FA9F6;
+      --accent-soft: #16334E;
+      --hot: #FF8B57;
+      --hot-soft: #38221A;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.28);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0C131A;
+    --surface: #151F29;
+    --surface-2: #1A2632;
+    --ink: #E9EFF5;
+    --muted: #94A6B6;
+    --line: #2A3846;
+    --line-soft: #212D39;
+    --accent: #5FA9F6;
+    --accent-soft: #16334E;
+    --hot: #FF8B57;
+    --hot-soft: #38221A;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.28);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 18px 24px 20px;
+  }
+  .topbar-inner { max-width: 1140px; margin: 0 auto; }
+  .brand {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .brand h1 {
+    font-family: var(--display);
+    font-size: 20px; font-weight: 600; letter-spacing: -.01em;
+    margin: 0;
+  }
+  .brand .sub { color: var(--muted); font-size: 13px; }
+
+  .searchbar {
+    display: grid;
+    grid-template-columns: 1.35fr 1.35fr .85fr .85fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .searchbar > div { background: var(--surface-2); padding: 9px 14px 10px; min-width: 0; }
+  .searchbar .lbl {
+    display: block; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 3px;
+  }
+  .searchbar .val {
+    display: block; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .searchbar input.val {
+    width: 100%; border: 0; background: none; padding: 0;
+    font-family: var(--body); font-size: 15px; color: var(--ink);
+    border-bottom: 1px dashed var(--line);
+  }
+  .searchbar input.val:focus { outline: none; border-bottom-color: var(--hot); }
+  .searchbar input.val::placeholder { color: var(--muted); }
+
+  /* ---------- layout ---------- */
+  .layout {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 22px 24px 56px;
+    display: grid;
+    grid-template-columns: 356px minmax(0, 1fr);
+    gap: 22px;
+  }
+
+  /* ---------- filters ---------- */
+  .filters {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 4px 16px 16px;
+    align-self: start;
+  }
+  .fgroup { border-bottom: 1px solid var(--line-soft); padding: 16px 0; }
+  .fgroup:last-child { border-bottom: 0; padding-bottom: 6px; }
+  .fgroup h2 {
+    font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 11px;
+  }
+
+  /* pills */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+    transition: background .12s, border-color .12s, color .12s;
+  }
+  .pill:hover { border-color: var(--hot); }
+  .pill[aria-pressed="true"] {
+    background: var(--hot-soft); border-color: var(--hot); color: var(--hot); font-weight: 500;
+  }
+
+  /* segmented */
+  .segmented {
+    display: flex; flex-direction: column; gap: 2px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 10px; padding: 3px;
+  }
+  .seg {
+    border: 0; background: none; border-radius: 7px;
+    padding: 8px 11px; font-size: 13px; text-align: left; cursor: pointer;
+  }
+  .seg:hover { color: var(--hot); }
+  .seg[aria-pressed="true"] {
+    background: var(--surface); color: var(--hot); font-weight: 500;
+    box-shadow: 0 1px 2px rgba(15,26,36,.1);
+  }
+
+  /* ---------- cabin ---------- */
+  .cabin {
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    border-radius: 46% 46% 14px 14px / 56px 56px 14px 14px;
+    padding: 14px 14px 10px;
+    display: grid;
+    grid-template-columns: 15px repeat(2, 1fr) 13px repeat(2, 1fr);
+    gap: 5px;
+    align-items: center;
+    position: relative;
+  }
+  .cabin .cap {
+    grid-column: 1 / -1; text-align: center;
+    font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+  }
+  .cabin .cap.nose { margin-bottom: 2px; }
+  .cabin .cap.tail { margin-top: 4px; }
+  .cabin .rownum {
+    font-family: var(--mono); font-size: 10.5px; color: var(--muted); text-align: center;
+  }
+  .seat {
+    height: 34px; border: 1px solid var(--line); background: var(--surface);
+    border-radius: 5px 5px 9px 9px;
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    cursor: pointer; position: relative; padding: 0;
+  }
+  .seat::before {
+    content: ""; position: absolute; left: 5px; right: 5px; top: 3px; height: 4px;
+    border-radius: 2px; background: var(--line);
+  }
+  .seat:hover { border-color: var(--hot); color: var(--hot); }
+  .seat[aria-pressed="true"] {
+    background: var(--hot); border-color: var(--hot); color: #fff; font-weight: 500;
+  }
+  .seat[aria-pressed="true"]::before { background: rgba(255,255,255,.55); }
+  .cabin-note { font-size: 11px; color: var(--muted); margin: 8px 0 8px; line-height: 1.35; }
+  .seat-any {
+    width: 100%; border: 1px dashed var(--line); background: none;
+    border-radius: 9px; padding: 9px 12px; font-size: 13px; cursor: pointer; text-align: left;
+  }
+  .seat-any:hover { border-color: var(--hot); color: var(--hot); }
+  .seat-any[aria-pressed="true"] {
+    border-style: solid; border-color: var(--hot); background: var(--hot-soft);
+    color: var(--hot); font-weight: 500;
+  }
+
+  /* checklist */
+  .checklist { display: flex; flex-direction: column; }
+  .check {
+    display: flex; align-items: flex-start; gap: 9px;
+    border: 0; background: none; cursor: pointer;
+    padding: 7px 2px; font-size: 13.5px; text-align: left;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .checklist .check:last-child { border-bottom: 0; }
+  .check::before {
+    content: "✓"; flex: 0 0 auto;
+    width: 17px; height: 17px; margin-top: 1px;
+    border: 1.5px solid var(--line); border-radius: 5px;
+    background: var(--surface);
+    font-size: 11px; line-height: 14px; text-align: center; color: transparent;
+  }
+  .check:hover { color: var(--hot); }
+  .check[aria-pressed="true"] { color: var(--hot); }
+  .check[aria-pressed="true"]::before { background: var(--hot); border-color: var(--hot); color: #fff; }
+  .check[data-exclusive]::before { border-radius: 50%; }
+
+  /* sliders */
+  .slider { margin-bottom: 16px; }
+  .slider:last-child { margin-bottom: 0; }
+  .slider .cap { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+  .slider .cap b { font-size: 13px; font-weight: 500; }
+  .slider .cap output { font-family: var(--mono); font-size: 11.5px; color: var(--hot); text-align: right; }
+  .slider input[type="range"] { width: 100%; accent-color: var(--hot); margin: 0; }
+  .slider .ends {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--muted); margin-top: 2px;
+  }
+
+  /* switches */
+  .switches { display: flex; flex-direction: column; gap: 3px; }
+  .switch {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    border: 0; background: none; cursor: pointer;
+    padding: 7px 2px; font-size: 13.5px; text-align: left;
+  }
+  .switch:hover { color: var(--hot); }
+  .switch i {
+    flex: 0 0 auto; width: 34px; height: 20px; border-radius: 999px;
+    background: var(--line); position: relative; transition: background .15s;
+  }
+  .switch i::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; border-radius: 50%; background: var(--surface);
+    transition: transform .15s;
+    box-shadow: 0 1px 2px rgba(15,26,36,.25);
+  }
+  .switch[aria-pressed="true"] { color: var(--hot); }
+  .switch[aria-pressed="true"] i { background: var(--hot); }
+  .switch[aria-pressed="true"] i::after { transform: translateX(14px); }
+
+  /* ---------- results ---------- */
+  .results { display: flex; flex-direction: column; gap: 12px; }
+  .results-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    flex-wrap: wrap; padding: 0 2px;
+  }
+  .results-head .count { font-size: 13px; color: var(--muted); }
+  .results-head .count b { color: var(--ink); font-weight: 600; }
+  .btn {
+    border: 1px solid var(--line); background: var(--surface);
+    border-radius: 8px; padding: 7px 13px; font-size: 13px; cursor: pointer;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .ticket {
+    position: sticky; top: 14px;
+    background: var(--surface);
+    border: 1px solid var(--hot);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 200px;
+  }
+  .ticket .body { padding: 20px 22px; min-width: 0; }
+  .ticket .stub {
+    border-left: 1px dashed var(--line);
+    padding: 20px;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
+    background: var(--surface-2);
+    border-radius: 0 12px 12px 0;
+  }
+  .ticket .who { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 7px; }
+  .ticket .who strong { font-size: 16px; font-weight: 600; }
+  .tag-route {
+    font-family: var(--mono); font-size: 11.5px;
+    background: var(--hot-soft); color: var(--hot);
+    padding: 3px 9px; border-radius: 5px;
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .ticket .scales {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .picked { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+  .picked span {
+    border: 1px solid transparent; border-radius: 999px;
+    padding: 4px 11px; font-size: 12.5px; line-height: 1.35;
+  }
+  .picked .empty { color: var(--muted); padding: 0; font-size: 13.5px; }
+
+  /* per-group looks on the receipt */
+  .picked .c-bag {
+    background: var(--hot-soft); color: var(--hot);
+    border-radius: 5px; padding-left: 24px; position: relative;
+  }
+  .picked .c-bag::before {
+    content: ""; position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+    width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid currentColor;
+  }
+  .picked .c-air {
+    font-family: var(--mono); font-size: 11.5px;
+    border: 1px dashed var(--hot); color: var(--hot); border-radius: 6px;
+  }
+  .picked .c-seat {
+    background: var(--ink); color: var(--ground); border-color: var(--ink);
+    font-family: var(--mono); font-size: 11.5px; border-radius: 4px;
+  }
+  .picked .c-fly { background: var(--accent-soft); color: var(--accent); }
+  .picked .c-fly::before { content: "✓ "; }
+  .picked .c-place { background: var(--hot-soft); color: var(--hot); }
+  .picked .c-back { border-color: var(--hot); color: var(--hot); }
+  .picked .c-back::before { content: "↺ "; }
+  .picked .c-rule {
+    border-color: var(--line); color: var(--ink);
+    font-size: 11.5px; letter-spacing: .03em; padding-left: 10px;
+  }
+  .picked .c-rule::before { content: "●"; color: var(--hot); font-size: 8px; vertical-align: 2px; margin-right: 6px; }
+
+  .stub .n {
+    font-family: var(--mono); font-size: 28px; font-weight: 500;
+    line-height: 1; font-variant-numeric: tabular-nums;
+  }
+  .stub .n small {
+    display: block; font-family: var(--body); font-size: 11.5px;
+    color: var(--muted); margin-top: 5px;
+  }
+  .stub .verdict { font-size: 12.5px; color: var(--hot); line-height: 1.3; }
+  .stub .barcode {
+    height: 30px; border-radius: 2px; opacity: .45;
+    background: repeating-linear-gradient(90deg,
+      var(--ink) 0 2px, transparent 2px 4px,
+      var(--ink) 4px 5px, transparent 5px 9px,
+      var(--ink) 9px 12px, transparent 12px 14px);
+  }
+  .stub .code { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+    .searchbar { grid-template-columns: 1fr 1fr; }
+    .ticket { grid-template-columns: minmax(0, 1fr); position: static; }
+    .ticket .stub {
+      border-left: 0; border-top: 1px dashed var(--line);
+      border-radius: 0 0 12px 12px;
+      flex-direction: row; align-items: flex-end; justify-content: space-between;
+    }
+    .stub .barcode { display: none; }
+    .results { order: -1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <h1>Ретро-рейс</h1>
+      <span class="sub">опиши своё типичное путешествие</span>
+    </div>
+    <div class="searchbar">
+      <div>
+        <label class="lbl" for="from">Откуда</label>
+        <input class="val" id="from" value="Обычный рабочий четверг" maxlength="40" placeholder="например, из офиса">
+      </div>
+      <div>
+        <label class="lbl" for="to">Куда</label>
+        <input class="val" id="to" value="Ретро команды" maxlength="40" placeholder="куда душа просит">
+      </div>
+      <div><span class="lbl">Когда</span><span class="val">прямо сейчас</span></div>
+      <div><span class="lbl">Пассажиры</span><span class="val">вся команда</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="filters">
+    <div class="fgroup">
+      <h2>Багаж</h2>
+      <div class="chips" data-multi>
+        <button class="pill" data-cat="bag" aria-pressed="false">Ручная кладь на три недели</button>
+        <button class="pill" data-cat="bag" aria-pressed="false">Чемодан на два дня</button>
+        <button class="pill" data-cat="bag" aria-pressed="true">Собираю накануне ночью</button>
+        <button class="pill" data-cat="bag" aria-pressed="false">Собираю за час до выхода</button>
+        <button class="pill" data-cat="bag" aria-pressed="false">Аптечка на все случаи жизни</button>
+        <button class="pill" data-cat="bag" aria-pressed="false">Везу домой еду</button>
+        <button class="pill" data-cat="bag" aria-pressed="false">Везу домой магнитик</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <h2>В аэропорту</h2>
+      <div class="segmented" data-single>
+        <button class="seg" data-cat="air" aria-pressed="false">Приезжаю за три часа, с запасом</button>
+        <button class="seg" data-cat="air" aria-pressed="true">Ровно к регистрации</button>
+        <button class="seg" data-cat="air" aria-pressed="false">Вбегаю в закрывающийся гейт</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <h2>Место в салоне</h2>
+      <div data-single>
+        <div class="cabin">
+          <span class="cap nose">нос</span>
+
+          <span class="rownum">1</span>
+          <button class="seat" data-cat="seat" data-label="Место 1A — первый ряд, у окна" aria-pressed="false">A</button>
+          <button class="seat" data-cat="seat" data-label="Место 1B — первый ряд, у прохода" aria-pressed="false">B</button>
+          <span></span>
+          <button class="seat" data-cat="seat" data-label="Место 1C — первый ряд, у прохода" aria-pressed="false">C</button>
+          <button class="seat" data-cat="seat" data-label="Место 1D — первый ряд, у окна" aria-pressed="false">D</button>
+
+          <span class="rownum">2</span>
+          <button class="seat" data-cat="seat" data-label="Место 2A — у окна" aria-pressed="true">A</button>
+          <button class="seat" data-cat="seat" data-label="Место 2B — у прохода" aria-pressed="false">B</button>
+          <span></span>
+          <button class="seat" data-cat="seat" data-label="Место 2C — у прохода" aria-pressed="false">C</button>
+          <button class="seat" data-cat="seat" data-label="Место 2D — у окна" aria-pressed="false">D</button>
+
+          <span class="rownum">3</span>
+          <button class="seat" data-cat="seat" data-label="Место 3A — у окна" aria-pressed="false">A</button>
+          <button class="seat" data-cat="seat" data-label="Место 3B — у прохода" aria-pressed="false">B</button>
+          <span></span>
+          <button class="seat" data-cat="seat" data-label="Место 3C — у прохода" aria-pressed="false">C</button>
+          <button class="seat" data-cat="seat" data-label="Место 3D — у окна" aria-pressed="false">D</button>
+
+          <span class="rownum">4</span>
+          <button class="seat" data-cat="seat" data-label="Место 4A — последний ряд, у окна" aria-pressed="false">A</button>
+          <button class="seat" data-cat="seat" data-label="Место 4B — последний ряд, у прохода" aria-pressed="false">B</button>
+          <span></span>
+          <button class="seat" data-cat="seat" data-label="Место 4C — последний ряд, у прохода" aria-pressed="false">C</button>
+          <button class="seat" data-cat="seat" data-label="Место 4D — последний ряд, у окна" aria-pressed="false">D</button>
+
+          <span class="cap tail">хвост</span>
+        </div>
+        <p class="cabin-note">Первый ряд — ноги вытянуть. Четвёртый — рядом с туалетом, зато выходить последним.</p>
+        <button class="seat-any" data-cat="seat" data-label="Сажусь где посадят" aria-pressed="false">Мне всё равно, где посадят</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <h2>В полёте</h2>
+      <div class="checklist" data-multi>
+        <button class="check" data-cat="fly" data-exclusive="sleep" aria-pressed="false">Сплю с разбега</button>
+        <button class="check" data-cat="fly" data-exclusive="sleep" aria-pressed="false">Не сплю вообще</button>
+        <button class="check" data-cat="fly" aria-pressed="true">Смотрю фильмы, которые больше нигде не посмотрю</button>
+        <button class="check" data-cat="fly" aria-pressed="false">Ем всё, что дают</button>
+        <button class="check" data-cat="fly" aria-pressed="false">Фотографирую крыло</button>
+        <button class="check" data-cat="fly" aria-pressed="false">Хлопаю при посадке</button>
+        <button class="check" data-cat="fly" aria-pressed="false">Встаю за сумкой до полной остановки</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <h2>Ползунки души</h2>
+      <div class="slider">
+        <div class="cap"><b>Продуманность плана</b><output id="out-plan"></output></div>
+        <input type="range" min="0" max="4" value="1" id="sl-plan" aria-label="Продуманность плана">
+        <div class="ends"><span>таблица по часам</span><span>куда вывезет</span></div>
+      </div>
+      <div class="slider">
+        <div class="cap"><b>Отпускной пульс</b><output id="out-tempo"></output></div>
+        <input type="range" min="0" max="4" value="3" id="sl-tempo" aria-label="Отпускной пульс">
+        <div class="ends"><span>лежать</span><span>20 км пешком</span></div>
+      </div>
+      <div class="slider">
+        <div class="cap"><b>Фотоаппетит</b><output id="out-photo"></output></div>
+        <input type="range" min="0" max="4" value="2" id="sl-photo" aria-label="Фотоаппетит">
+        <div class="ends"><span>ни одной</span><span>две тысячи</span></div>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <h2>На месте</h2>
+      <div class="chips" data-multi>
+        <button class="pill" data-cat="place" aria-pressed="false">Обязательно местный рынок</button>
+        <button class="pill" data-cat="place" aria-pressed="true">Самое странное блюдо в меню</button>
+        <button class="pill" data-cat="place" aria-pressed="false">Учу пять фраз на местном языке</button>
+        <button class="pill" data-cat="place" aria-pressed="false">Гуляю без маршрута</button>
+        <button class="pill" data-cat="place" aria-pressed="false">Первым делом кофе</button>
+        <button class="pill" data-cat="place" aria-pressed="false">Встаю в пять ради рассвета</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <h2>Возвращения</h2>
+      <div class="segmented" data-single>
+        <button class="seg" data-cat="back" aria-pressed="false">Возвращаюсь в одно и то же место</button>
+        <button class="seg" data-cat="back" aria-pressed="false">Никогда дважды в одну страну</button>
+        <button class="seg" data-cat="back" aria-pressed="true">Как сложится</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <h2>Личные принципы</h2>
+      <div class="switches" data-multi>
+        <button class="switch" data-cat="rule" data-label="Роуминг не включаю принципиально" aria-pressed="true"><span>Роуминг не включаю</span><i></i></button>
+        <button class="switch" data-cat="rule" data-label="Поезд лучше самолёта" aria-pressed="false"><span>Поезд лучше самолёта</span><i></i></button>
+        <button class="switch" data-cat="rule" data-label="В отпуске не открываю рабочий чат" aria-pressed="false"><span>В отпуске не открываю рабочий чат</span><i></i></button>
+        <button class="switch" data-cat="rule" data-label="Экскурсии с гидом — никогда" aria-pressed="false"><span>Экскурсии с гидом — никогда</span><i></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <section class="results">
+    <div class="results-head">
+      <span class="count">Выбрано: <b id="found">6</b></span>
+      <button class="btn" id="reset">Сбросить</button>
+    </div>
+
+    <article class="ticket">
+      <div class="body">
+        <div class="who">
+          <strong>Маршрутная квитанция</strong>
+          <span class="tag-route" id="tag-route">Обычный рабочий четверг → Ретро команды</span>
+        </div>
+        <div class="scales" id="scales"></div>
+        <div class="picked" id="picked"></div>
+      </div>
+      <div class="stub">
+        <span class="n" id="stub-n">6<small>фильтров</small></span>
+        <span class="verdict" id="verdict"></span>
+        <span class="barcode" aria-hidden="true"></span>
+        <span class="code">RTR&nbsp;001</span>
+      </div>
+    </article>
+  </section>
+</main>
+
+<script>
+  var SCALES = {
+    plan:  ["план по часам в таблице", "маршрут набросан", "есть даты и жильё", "есть только билеты", "куда вывезет"],
+    tempo: ["лежать и не двигаться", "лежать, но с прогулкой", "поровну", "много хожу", "20 км пешком в день"],
+    photo: ["ни одной фотографии", "пара кадров", "нормальный альбом", "снимаю всё подряд", "две тысячи фотографий"]
+  };
+  var VERDICTS = [
+    { max: 0,  text: "Летим наугад, сюрприз так сюрприз" },
+    { max: 2,  text: "Давай ещё вдарим парочку фильтров?" },
+    { max: 5,  text: "Обычный живой человек" },
+    { max: 8,  text: "Характер уже прощупывается" },
+    { max: 12, text: "Сложный пассажир, но мы справимся" },
+    { max: 16, text: "Таких рейсов почти не бывает" },
+    { max: 999, text: "Проще собрать под вас отдельный чартер" }
+  ];
+  var KEY = "retro-flight-v3";
+
+  var picked = document.getElementById("picked");
+  var scalesLine = document.getElementById("scales");
+  var found = document.getElementById("found");
+  var stubN = document.getElementById("stub-n");
+  var verdict = document.getElementById("verdict");
+  var tagRoute = document.getElementById("tag-route");
+  var fromEl = document.getElementById("from");
+  var toEl = document.getElementById("to");
+
+  var sliders = {
+    plan: document.getElementById("sl-plan"),
+    tempo: document.getElementById("sl-tempo"),
+    photo: document.getElementById("sl-photo")
+  };
+  var outs = {
+    plan: document.getElementById("out-plan"),
+    tempo: document.getElementById("out-tempo"),
+    photo: document.getElementById("out-photo")
+  };
+  var SEL = ".pill, .seg, .seat, .seat-any, .check, .switch";
+
+  function allControls() {
+    return Array.prototype.slice.call(document.querySelectorAll(SEL));
+  }
+  function labelOf(el) {
+    return el.getAttribute("data-label") || el.textContent.trim();
+  }
+  function selected() {
+    return allControls().filter(function (c) { return c.getAttribute("aria-pressed") === "true"; });
+  }
+  function verdictFor(n) {
+    for (var i = 0; i < VERDICTS.length; i++) { if (n <= VERDICTS[i].max) return VERDICTS[i].text; }
+    return "";
+  }
+  function routeText() {
+    var a = fromEl.value.trim() || "Откуда-то";
+    var b = toEl.value.trim() || "Куда-то";
+    return a + " → " + b;
+  }
+
+  function render() {
+    var on = selected();
+    picked.innerHTML = "";
+    if (!on.length) {
+      var p = document.createElement("span");
+      p.className = "empty";
+      p.textContent = "Отметь слева то, что про тебя правда — квитанция соберётся здесь.";
+      picked.appendChild(p);
+    } else {
+      on.forEach(function (c) {
+        var s = document.createElement("span");
+        s.className = "c-" + (c.getAttribute("data-cat") || "place");
+        s.textContent = labelOf(c);
+        picked.appendChild(s);
+      });
+    }
+    var parts = ["plan", "tempo", "photo"].map(function (k) {
+      var v = SCALES[k][+sliders[k].value];
+      outs[k].textContent = v;
+      return v;
+    });
+    scalesLine.textContent = parts.join(" · ");
+    tagRoute.textContent = routeText();
+    found.textContent = String(on.length);
+    stubN.innerHTML = on.length + "<small>фильтров</small>";
+    verdict.textContent = verdictFor(on.length);
+    save();
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        states: allControls().map(function (c) { return c.getAttribute("aria-pressed"); }),
+        plan: sliders.plan.value, tempo: sliders.tempo.value, photo: sliders.photo.value,
+        from: fromEl.value, to: toEl.value
+      }));
+    } catch (e) { /* приватный режим — просто не сохраняем */ }
+  }
+
+  function restore() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return;
+      var state = JSON.parse(raw);
+      var ctrls = allControls();
+      if (state.states && state.states.length === ctrls.length) {
+        ctrls.forEach(function (c, i) { c.setAttribute("aria-pressed", state.states[i]); });
+      }
+      ["plan", "tempo", "photo"].forEach(function (k) {
+        if (state[k] != null) sliders[k].value = state[k];
+      });
+      if (typeof state.from === "string") fromEl.value = state.from;
+      if (typeof state.to === "string") toEl.value = state.to;
+    } catch (e) { /* игнорируем битое состояние */ }
+  }
+
+  document.querySelectorAll("[data-multi], [data-single]").forEach(function (group) {
+    var single = group.hasAttribute("data-single");
+    group.addEventListener("click", function (e) {
+      var btn = e.target.closest(SEL);
+      if (!btn || !group.contains(btn)) return;
+      var was = btn.getAttribute("aria-pressed") === "true";
+      if (single) {
+        group.querySelectorAll("[aria-pressed]").forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+      } else {
+        var ex = btn.getAttribute("data-exclusive");
+        if (ex && !was) {
+          group.querySelectorAll('[data-exclusive="' + ex + '"]').forEach(function (c) {
+            c.setAttribute("aria-pressed", "false");
+          });
+        }
+      }
+      btn.setAttribute("aria-pressed", was ? "false" : "true");
+      render();
+    });
+  });
+
+  Object.keys(sliders).forEach(function (k) {
+    sliders[k].addEventListener("input", render);
+  });
+  [fromEl, toEl].forEach(function (el) { el.addEventListener("input", render); });
+
+  document.getElementById("reset").addEventListener("click", function () {
+    allControls().forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+    sliders.plan.value = 2; sliders.tempo.value = 2; sliders.photo.value = 2;
+    render();
+  });
+
+  restore();
+  render();
+</script>
