@@ -420,6 +420,102 @@
     100% { transform: scale(1) rotate(0); }
   }
 
+  /* ---------- easter eggs ---------- */
+  .seat[data-taken="true"] {
+    cursor: not-allowed; color: var(--muted); opacity: .75;
+    background: repeating-linear-gradient(-45deg,
+      var(--surface-2) 0 4px, var(--line) 4px 6px);
+  }
+  .seat[data-taken="true"]::before { background: var(--line); }
+
+  .snack {
+    position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%);
+    z-index: 60; display: flex; gap: 10px; align-items: center;
+    background: var(--header); color: var(--signal);
+    border: 1px solid var(--signal); border-radius: 10px;
+    padding: 11px 18px; font-size: 14px; font-weight: 600;
+    box-shadow: 0 16px 40px rgba(0,0,0,.35);
+    animation: snackIn .28s cubic-bezier(.34, 1.4, .64, 1);
+  }
+  @keyframes snackIn {
+    from { transform: translate(-50%, 16px); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+  }
+
+  .flash {
+    position: fixed; inset: 0; z-index: 70; background: #fff;
+    opacity: 0; pointer-events: none;
+  }
+  .flash.go { animation: shutter .5s ease-out; }
+  @keyframes shutter {
+    0% { opacity: 0; }
+    8% { opacity: .95; }
+    22% { opacity: .1; }
+    34% { opacity: .8; }
+    100% { opacity: 0; }
+  }
+  .cam {
+    position: fixed; inset: 0; z-index: 71; display: grid; place-items: center;
+    pointer-events: none; opacity: 0;
+  }
+  .cam span { font-size: 96px; line-height: 1; display: block; }
+  .cam.go { animation: camPop 1.1s cubic-bezier(.22, 1.2, .36, 1); }
+  @keyframes camPop {
+    0% { opacity: 0; transform: scale(.4) rotate(-12deg); }
+    18% { opacity: 1; transform: scale(1.15) rotate(4deg); }
+    38% { transform: scale(1) rotate(0); }
+    72% { opacity: 1; }
+    100% { opacity: 0; transform: scale(1.05) translateY(-14px); }
+  }
+
+  .modal {
+    position: fixed; inset: 0; z-index: 80;
+    background: rgba(10,11,14,.72);
+    display: grid; place-items: center; padding: 24px;
+  }
+  .modal[hidden] { display: none; }
+  .modal-card {
+    background: var(--surface); border: 1px solid var(--edge); border-radius: 18px;
+    padding: 24px; width: min(420px, 100%); text-align: center;
+    animation: cardIn .3s cubic-bezier(.34, 1.4, .64, 1);
+  }
+  @keyframes cardIn { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-card h3 {
+    font-family: var(--display); font-size: 17px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: -.01em; margin: 0 0 4px;
+  }
+  .modal-card .hint {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 18px;
+  }
+  .wheel-wrap { position: relative; width: 260px; height: 260px; margin: 0 auto 18px; }
+  .wheel-wrap::after {
+    content: ""; position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+    border-left: 9px solid transparent; border-right: 9px solid transparent;
+    border-top: 16px solid var(--signal); z-index: 3;
+    filter: drop-shadow(0 1px 0 var(--edge));
+  }
+  .wheel {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 2px solid var(--edge);
+    transition: transform 3.4s cubic-bezier(.13, .85, .2, 1);
+  }
+  .wheel .lab {
+    position: absolute; left: 50%; top: 50%; width: 104px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .02em;
+    text-align: center; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.45);
+  }
+  .wheel-hub {
+    position: absolute; left: 50%; top: 50%; width: 42px; height: 42px;
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: var(--surface); border: 2px solid var(--edge); z-index: 2;
+  }
+  .modal-card .result {
+    font-family: var(--display); font-size: 17px; font-weight: 600;
+    min-height: 46px; margin-bottom: 16px; text-wrap: balance;
+  }
+  .modal-card .result span { color: var(--muted); font-family: var(--body); font-size: 13px; display: block; }
+
   @media (max-width: 900px) {
     .layout { grid-template-columns: minmax(0, 1fr); }
     .searchbar { grid-template-columns: 1fr 1fr; }
@@ -576,7 +672,7 @@
       <div class="slider">
         <div class="cap"><b>Продуманность плана</b><output id="out-plan"></output></div>
         <input type="range" min="0" max="4" value="1" id="sl-plan" aria-label="Продуманность плана">
-        <div class="ends"><span>таблица по часам</span><span>куда вывезет</span></div>
+        <div class="ends"><span>таблица по часам</span><span>куда несёт рок событий</span></div>
       </div>
       <div class="slider">
         <div class="cap"><b>Отпускной пульс</b><output id="out-tempo"></output></div>
@@ -606,8 +702,8 @@
       <h2>Возвращения</h2>
       <div class="segmented" data-single>
         <button class="seg" data-cat="back" aria-pressed="false">Возвращаюсь в одно и то же место</button>
-        <button class="seg" data-cat="back" aria-pressed="false">Никогда дважды в одну страну</button>
-        <button class="seg" data-cat="back" aria-pressed="true">Как сложится</button>
+        <button class="seg" data-cat="back" aria-pressed="false">Дважды в одну страну? Никогда</button>
+        <button class="seg" data-cat="back" data-wheel aria-pressed="false">Как сложится</button>
       </div>
     </div>
 
@@ -646,12 +742,28 @@
   </section>
 </main>
 
+<div class="flash" id="flash" aria-hidden="true"></div>
+<div class="cam" id="cam" aria-hidden="true"><span>📸</span></div>
+
+<div class="modal" id="wheel-modal" hidden>
+  <div class="modal-card" role="dialog" aria-label="Колесо судьбы">
+    <h3>Колесо судьбы</h3>
+    <p class="hint">пусть направление выберет оно</p>
+    <div class="wheel-wrap">
+      <div class="wheel" id="wheel"></div>
+      <div class="wheel-hub" aria-hidden="true"></div>
+    </div>
+    <div class="result" id="wheel-result">Крутим…</div>
+    <button class="btn" id="wheel-close">Ну ок, летим</button>
+  </div>
+</div>
+
 <script>
   var OPTIONS = {
     from: [
       "Обычный рабочий четверг",
       "Прямо из спринта",
-      "Из-под пледа",
+      "Из под пледа",
       "Из очереди за кофе",
       "Из созвона, который мог быть письмом",
       "Из отпуска, который был давно",
@@ -685,14 +797,13 @@
       "Только те, кто дочитал до конца",
       "Я и мой ноутбук",
       "Я и чемодан вопросов",
-      "Я, но мысленно",
       "Я и мои невыключенные уведомления",
       "Все, кто выжил в этом спринте"
     ]
   };
 
   var SCALES = {
-    plan:  ["план по часам в таблице", "маршрут набросан", "есть даты и жильё", "есть только билеты", "куда вывезет"],
+    plan:  ["план по часам в таблице", "маршрут набросан", "есть даты и жильё", "есть только билеты", "куда несёт нас этот рок событий"],
     tempo: ["лежать и не двигаться", "лежать, но с прогулкой", "день гуляю, день лежу", "много хожу", "20 км пешком в день"],
     photo: ["ни одной фотографии", "пара кадров", "нормальный альбом", "снимаю всё подряд", "две тысячи фотографий"]
   };
@@ -704,6 +815,10 @@
     { max: 12, text: "Сложный пассажир, но мы справимся" },
     { max: 16, text: "Таких рейсов почти не бывает" },
     { max: 999, text: "Проще собрать под вас отдельный чартер" }
+  ];
+  var WHEEL_SHORT = [
+    "Ретро", "Без уведомлений", "Глаза глядят", "К морю",
+    "В горы", "Дешевле всего", "Другой пояс", "Океан"
   ];
   var KEY = "retro-flight-v6";
 
@@ -820,6 +935,114 @@
     return inputs[key].value.trim() || fallback;
   }
 
+  /* ---------- пасхалки ---------- */
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var seatPicks = 0;
+  var seatEggDone = false;
+  var lastPhoto = 2;
+  var snackTimer = null;
+
+  function snack(text) {
+    var old = document.querySelector(".snack");
+    if (old) old.remove();
+    clearTimeout(snackTimer);
+    var el = document.createElement("div");
+    el.className = "snack";
+    el.setAttribute("role", "status");
+    el.textContent = text;
+    document.body.appendChild(el);
+    snackTimer = setTimeout(function () { el.remove(); }, 3200);
+  }
+
+  var flashEl = document.getElementById("flash");
+  var camEl = document.getElementById("cam");
+  function shutter() {
+    snack("Кадр номер две тысячи");
+    if (reduced) return;
+    flashEl.classList.remove("go");
+    camEl.classList.remove("go");
+    void flashEl.offsetWidth;
+    flashEl.classList.add("go");
+    camEl.classList.add("go");
+  }
+
+  /* колесо судьбы */
+  var wheelModal = document.getElementById("wheel-modal");
+  var wheelEl = document.getElementById("wheel");
+  var wheelResult = document.getElementById("wheel-result");
+  var wheelBuilt = false;
+  var wheelAngle = 0;
+
+  function buildWheel() {
+    if (wheelBuilt) return;
+    var items = OPTIONS.to;
+    var step = 360 / items.length;
+    var colors = ["#101114", "#2B4BFF", "#FFD400", "#3B3F49"];
+    var stops = items.map(function (_, i) {
+      var c = colors[i % colors.length];
+      return c + " " + (i * step) + "deg " + ((i + 1) * step) + "deg";
+    });
+    wheelEl.style.background = "conic-gradient(from " + (-step / 2) + "deg, " + stops.join(", ") + ")";
+    items.forEach(function (_, i) {
+      var lab = document.createElement("span");
+      lab.className = "lab";
+      lab.textContent = WHEEL_SHORT[i] || "?";
+      lab.style.transform = "translate(-50%, -50%) rotate(" + (i * step) + "deg) translateY(-86px)";
+      if (colors[i % colors.length] === "#FFD400") lab.style.color = "#101114";
+      wheelEl.appendChild(lab);
+    });
+    wheelBuilt = true;
+  }
+
+  function spinWheel() {
+    buildWheel();
+    var items = OPTIONS.to;
+    var step = 360 / items.length;
+    var idx = Math.floor(Math.random() * items.length);
+    wheelModal.hidden = false;
+    wheelResult.textContent = "Крутим…";
+
+    var from = wheelAngle;
+    var spins = 5 + Math.floor(Math.random() * 2);
+    var delta = (((-idx * step) - wheelAngle) % 360 + 360) % 360;
+    var target = wheelAngle + spins * 360 + delta;
+    wheelAngle = target;
+
+    if (reduced) {
+      wheelEl.style.transition = "none";
+      wheelEl.style.transform = "rotate(" + (-idx * step) + "deg)";
+    } else {
+      /* фиксируем стартовый угол уже на видимом элементе, иначе перехода не будет */
+      wheelEl.style.transition = "none";
+      wheelEl.style.transform = "rotate(" + from + "deg)";
+      void wheelEl.offsetWidth;
+      requestAnimationFrame(function () {
+        wheelEl.style.transition = "transform 3.4s cubic-bezier(.13, .85, .2, 1)";
+        wheelEl.style.transform = "rotate(" + target + "deg)";
+      });
+    }
+
+    setTimeout(function () {
+      inputs.to.value = items[idx];
+      render();
+      wheelResult.innerHTML = "";
+      wheelResult.appendChild(document.createTextNode(items[idx]));
+      var sub = document.createElement("span");
+      sub.textContent = "поле «Куда» уже обновлено";
+      wheelResult.appendChild(sub);
+    }, reduced ? 60 : 3500);
+  }
+
+  document.getElementById("wheel-close").addEventListener("click", function () {
+    wheelModal.hidden = true;
+  });
+  wheelModal.addEventListener("click", function (e) {
+    if (e.target === wheelModal) wheelModal.hidden = true;
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !wheelModal.hidden) wheelModal.hidden = true;
+  });
+
   function syncStamps(count) {
     while (stamps.length < count) { stamps.push(randomStamp()); }
     if (stamps.length > count) { stamps.length = count; }
@@ -893,7 +1116,12 @@
         plan: sliders.plan.value, tempo: sliders.tempo.value, photo: sliders.photo.value,
         from: inputs.from.value, to: inputs.to.value,
         when: inputs.when.value, who: inputs.who.value,
-        stamps: stamps
+        stamps: stamps,
+        seatPicks: seatPicks,
+        seatEggDone: seatEggDone,
+        taken: Array.prototype.slice.call(document.querySelectorAll(".seat")).map(function (s) {
+          return s.getAttribute("data-taken") === "true" ? 1 : 0;
+        })
       }));
     } catch (e) { /* приватный режим — просто не сохраняем */ }
   }
@@ -916,6 +1144,14 @@
       if (Array.isArray(state.stamps)) {
         stamps = state.stamps.filter(function (s) { return typeof s === "string"; });
       }
+      if (typeof state.seatPicks === "number") seatPicks = state.seatPicks;
+      if (state.seatEggDone === true) seatEggDone = true;
+      if (state.photo != null) lastPhoto = +state.photo;
+      if (Array.isArray(state.taken)) {
+        document.querySelectorAll(".seat").forEach(function (s, i) {
+          if (state.taken[i]) { s.setAttribute("data-taken", "true"); s.disabled = true; }
+        });
+      }
     } catch (e) { /* игнорируем битое состояние */ }
   }
 
@@ -925,6 +1161,19 @@
       var btn = e.target.closest(SEL);
       if (!btn || !group.contains(btn)) return;
       var was = btn.getAttribute("aria-pressed") === "true";
+
+      if (btn.classList.contains("seat") && !was) {
+        seatPicks++;
+        if (seatPicks === 3 && !seatEggDone) {
+          seatEggDone = true;
+          btn.setAttribute("data-taken", "true");
+          btn.disabled = true;
+          snack("А ВСЁёёё, уже заняли!!");
+          save();
+          return;
+        }
+      }
+
       if (single) {
         group.querySelectorAll("[aria-pressed]").forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
       } else {
@@ -937,11 +1186,20 @@
       }
       btn.setAttribute("aria-pressed", was ? "false" : "true");
       render();
+
+      if (!was && btn.hasAttribute("data-wheel")) spinWheel();
     });
   });
 
   Object.keys(sliders).forEach(function (k) {
-    sliders[k].addEventListener("input", render);
+    sliders[k].addEventListener("input", function () {
+      if (k === "photo") {
+        var now = +sliders.photo.value;
+        if (now === 4 && lastPhoto !== 4) shutter();
+        lastPhoto = now;
+      }
+      render();
+    });
   });
 
   document.getElementById("reset").addEventListener("click", function () {
