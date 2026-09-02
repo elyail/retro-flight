@@ -74,7 +74,11 @@
     font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
     text-transform: uppercase; color: var(--signal);
     border: 1px solid var(--header-line); border-radius: 999px; padding: 4px 11px;
+    background: none; cursor: pointer;
   }
+  .status:hover { border-color: var(--signal); }
+  .status.closed { color: #FF6B5A; }
+  .status.closed .dot { background: #FF6B5A; }
   .status .dot {
     width: 7px; height: 7px; border-radius: 50%; background: var(--signal);
     animation: blink 1.9s ease-in-out infinite;
@@ -246,12 +250,13 @@
     transition: background .14s, border-color .14s, color .14s;
   }
   .check[data-exclusive]::before { border-radius: 50%; }
+  .check { position: relative; }
   .check:hover { background: var(--surface-2); }
   .check[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); }
   .check[aria-pressed="true"]::before { background: var(--accent); border-color: var(--accent); color: #fff; }
 
   /* sliders */
-  .slider { margin-bottom: 18px; }
+  .slider { margin-bottom: 18px; position: relative; }
   .slider:last-child { margin-bottom: 0; }
   .slider .cap { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
   .slider .cap b { font-size: 13px; font-weight: 600; }
@@ -405,6 +410,7 @@
       var(--ink) 4px 5px, transparent 5px 9px,
       var(--ink) 9px 12px, transparent 12px 14px);
   }
+  .stub .stamps-wrap { position: relative; }
   .stub .stamps { display: flex; flex-wrap: wrap; gap: 6px 7px; }
   .stub .stamps button {
     border: 0; background: none; padding: 0; cursor: pointer;
@@ -433,10 +439,81 @@
     z-index: 60; display: flex; gap: 10px; align-items: center;
     background: var(--header); color: var(--signal);
     border: 1px solid var(--signal); border-radius: 10px;
-    padding: 11px 18px; font-size: 14px; font-weight: 600;
+    padding: 11px 18px; font-size: 14px; font-weight: 600; max-width: calc(100vw - 40px);
     box-shadow: 0 16px 40px rgba(0,0,0,.35);
     animation: snackIn .28s cubic-bezier(.34, 1.4, .64, 1);
   }
+  .player {
+    position: fixed; left: 20px; bottom: 22px; z-index: 60;
+    display: flex; align-items: center; gap: 11px;
+    background: var(--header); color: var(--header-ink);
+    border: 1px solid var(--header-line); border-radius: 999px;
+    padding: 6px 18px 6px 6px; font-size: 12.5px; font-weight: 500;
+    box-shadow: 0 14px 34px rgba(0,0,0,.3);
+  }
+  .player[hidden] { display: none; }
+  .player button {
+    width: 34px; height: 34px; border: 0; border-radius: 50%;
+    background: var(--signal); cursor: pointer;
+    display: grid; place-items: center; font-size: 15px; line-height: 1;
+  }
+  .player button:hover { filter: brightness(1.08); }
+
+  .fly { position: fixed; inset: 0; z-index: 66; pointer-events: none; overflow: hidden; }
+  .fly b { position: absolute; top: 0; font-size: 40px; animation: flyDown 2.1s ease-in forwards; }
+  @keyframes flyDown {
+    0% { transform: translateY(-22vh) rotate(-16deg); opacity: 0; }
+    10% { opacity: 1; }
+    86% { opacity: 1; }
+    100% { transform: translateY(112vh) rotate(24deg); opacity: 0; }
+  }
+
+  .tip {
+    position: absolute; left: 0; right: 0; bottom: calc(100% + 6px); z-index: 20;
+    background: var(--header); color: var(--signal);
+    border: 1px solid var(--signal); border-radius: 9px;
+    padding: 8px 11px; font-size: 12.5px; font-weight: 600; line-height: 1.3;
+    box-shadow: 0 12px 26px rgba(0,0,0,.28);
+    animation: tipIn .22s ease-out;
+  }
+  .tip::after {
+    content: ""; position: absolute; left: 24px; top: 100%;
+    border: 6px solid transparent; border-top-color: var(--signal);
+  }
+  @keyframes tipIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .filters.frozen { pointer-events: none; opacity: .55; filter: grayscale(.4); }
+
+  .ticker.rush .run { animation-duration: 5s; }
+  .ticker.rush { animation: tickerBlink .5s steps(1) infinite; }
+  @keyframes tickerBlink { 0%, 100% { filter: none; } 50% { filter: invert(1); } }
+
+  .ticket.charter { border-color: var(--signal); border-width: 2px; }
+  .ticket.charter .stub { background: color-mix(in srgb, var(--signal) 16%, var(--surface)); }
+
+  body.business .ticket { border-color: var(--signal); }
+  body.business .kicker::after {
+    content: " · бизнес-класс"; color: var(--signal); font-weight: 500;
+  }
+  body.business .seat[data-row="1"] {
+    height: 50px; border-width: 2px;
+    background: color-mix(in srgb, var(--signal) 30%, var(--surface));
+    font-size: 12px; color: var(--ink);
+  }
+  body.business .seat[data-row="1"][aria-pressed="true"] {
+    background: var(--accent); color: #fff;
+  }
+
+  .stub .stamps.dense { gap: 6px 0; }
+  .stub .stamps.dense button { margin-right: -9px; }
+  .stub .stamps.dense button:hover { z-index: 2; position: relative; }
+
+  .snack a {
+    color: var(--header); background: var(--signal);
+    text-decoration: none; border-radius: 6px; padding: 3px 10px;
+    font-size: 12.5px; font-weight: 700; white-space: nowrap;
+  }
+  .snack a:hover { filter: brightness(1.08); }
   @keyframes snackIn {
     from { transform: translate(-50%, 16px); opacity: 0; }
     to { transform: translate(-50%, 0); opacity: 1; }
@@ -537,7 +614,7 @@
   <div class="topbar-inner">
     <div class="brand">
       <h1>Ретро-рейс</h1>
-      <span class="status"><span class="dot" aria-hidden="true"></span>посадка открыта</span>
+      <button class="status" id="status" type="button"><span class="dot" aria-hidden="true"></span><span id="status-text">посадка открыта</span></button>
       <span class="sub">опиши своё типичное путешествие</span>
     </div>
     <div class="searchbar">
@@ -607,7 +684,7 @@
     <div class="fgroup">
       <h2>В аэропорту</h2>
       <div class="segmented" data-single>
-        <button class="seg" data-cat="air" aria-pressed="false">Приезжаю за три часа, с запасом</button>
+        <button class="seg" data-cat="air" data-early aria-pressed="false">Приезжаю за 5 часов, с запасом</button>
         <button class="seg" data-cat="air" aria-pressed="true">Ровно к регистрации</button>
         <button class="seg" data-cat="air" aria-pressed="false">Вбегаю в закрывающийся гейт</button>
       </div>
@@ -620,32 +697,32 @@
           <span class="cap nose">нос</span>
 
           <span class="rownum">1</span>
-          <button class="seat" data-cat="seat" data-label="Место 1A — первый ряд, у окна" aria-pressed="false">A</button>
-          <button class="seat" data-cat="seat" data-label="Место 1B — первый ряд, у прохода" aria-pressed="false">B</button>
+          <button class="seat" data-row="1" data-cat="seat" data-label="Место 1A — первый ряд, у окна" aria-pressed="false">A</button>
+          <button class="seat" data-row="1" data-cat="seat" data-label="Место 1B — первый ряд, у прохода" aria-pressed="false">B</button>
           <span></span>
-          <button class="seat" data-cat="seat" data-label="Место 1C — первый ряд, у прохода" aria-pressed="false">C</button>
-          <button class="seat" data-cat="seat" data-label="Место 1D — первый ряд, у окна" aria-pressed="false">D</button>
+          <button class="seat" data-row="1" data-cat="seat" data-label="Место 1C — первый ряд, у прохода" aria-pressed="false">C</button>
+          <button class="seat" data-row="1" data-cat="seat" data-label="Место 1D — первый ряд, у окна" aria-pressed="false">D</button>
 
           <span class="rownum">2</span>
-          <button class="seat" data-cat="seat" data-label="Место 2A — у окна" aria-pressed="true">A</button>
-          <button class="seat" data-cat="seat" data-label="Место 2B — у прохода" aria-pressed="false">B</button>
+          <button class="seat" data-row="2" data-cat="seat" data-label="Место 2A — у окна" aria-pressed="true">A</button>
+          <button class="seat" data-row="2" data-cat="seat" data-label="Место 2B — у прохода" aria-pressed="false">B</button>
           <span></span>
-          <button class="seat" data-cat="seat" data-label="Место 2C — у прохода" aria-pressed="false">C</button>
-          <button class="seat" data-cat="seat" data-label="Место 2D — у окна" aria-pressed="false">D</button>
+          <button class="seat" data-row="2" data-cat="seat" data-label="Место 2C — у прохода" aria-pressed="false">C</button>
+          <button class="seat" data-row="2" data-cat="seat" data-label="Место 2D — у окна" aria-pressed="false">D</button>
 
           <span class="rownum">3</span>
-          <button class="seat" data-cat="seat" data-label="Место 3A — у окна" aria-pressed="false">A</button>
-          <button class="seat" data-cat="seat" data-label="Место 3B — у прохода" aria-pressed="false">B</button>
+          <button class="seat" data-row="3" data-cat="seat" data-label="Место 3A — у окна" aria-pressed="false">A</button>
+          <button class="seat" data-row="3" data-cat="seat" data-label="Место 3B — у прохода" aria-pressed="false">B</button>
           <span></span>
-          <button class="seat" data-cat="seat" data-label="Место 3C — у прохода" aria-pressed="false">C</button>
-          <button class="seat" data-cat="seat" data-label="Место 3D — у окна" aria-pressed="false">D</button>
+          <button class="seat" data-row="3" data-cat="seat" data-label="Место 3C — у прохода" aria-pressed="false">C</button>
+          <button class="seat" data-row="3" data-cat="seat" data-label="Место 3D — у окна" aria-pressed="false">D</button>
 
           <span class="rownum">4</span>
-          <button class="seat" data-cat="seat" data-label="Место 4A — последний ряд, у окна" aria-pressed="false">A</button>
-          <button class="seat" data-cat="seat" data-label="Место 4B — последний ряд, у прохода" aria-pressed="false">B</button>
+          <button class="seat" data-row="4" data-cat="seat" data-label="Место 4A — последний ряд, у окна" aria-pressed="false">A</button>
+          <button class="seat" data-row="4" data-cat="seat" data-label="Место 4B — последний ряд, у прохода" aria-pressed="false">B</button>
           <span></span>
-          <button class="seat" data-cat="seat" data-label="Место 4C — последний ряд, у прохода" aria-pressed="false">C</button>
-          <button class="seat" data-cat="seat" data-label="Место 4D — последний ряд, у окна" aria-pressed="false">D</button>
+          <button class="seat" data-row="4" data-cat="seat" data-label="Место 4C — последний ряд, у прохода" aria-pressed="false">C</button>
+          <button class="seat" data-row="4" data-cat="seat" data-label="Место 4D — последний ряд, у окна" aria-pressed="false">D</button>
 
           <span class="cap tail">хвост</span>
         </div>
@@ -736,7 +813,9 @@
         <span class="n" id="stub-n">6<small>фильтров</small></span>
         <span class="verdict" id="verdict"></span>
         <span class="barcode" aria-hidden="true"></span>
-        <div class="stamps" id="stamps" title="штамп за каждый фильтр — кликни, чтобы поменять"></div>
+        <div class="stamps-wrap" id="stamps-wrap">
+          <div class="stamps" id="stamps" title="штамп за каждый фильтр — кликни, чтобы поменять"></div>
+        </div>
       </div>
     </article>
   </section>
@@ -744,6 +823,13 @@
 
 <div class="flash" id="flash" aria-hidden="true"></div>
 <div class="cam" id="cam" aria-hidden="true"><span>📸</span></div>
+<div class="fly" id="fly" aria-hidden="true"></div>
+
+<div class="player" id="player" hidden>
+  <button id="player-btn" type="button" aria-label="Включить или остановить песню">▶️</button>
+  <span>Мин яратам сине, Татарстан</span>
+</div>
+<audio id="song" src="song.mp3" preload="none"></audio>
 
 <div class="modal" id="wheel-modal" hidden>
   <div class="modal-card" role="dialog" aria-label="Колесо судьбы">
@@ -778,7 +864,7 @@
       "В горы, где не ловит",
       "Куда дешевле всего",
       "В другой часовой пояс",
-      "Домой, но с видом на океан"
+      "Домой, в Татарстан"
     ],
     when: [
       "Прямо сейчас",
@@ -794,11 +880,11 @@
       "Вся команда",
       "Вся команда и один опоздавший",
       "Все, кроме тех, кто в отпуске",
-      "Только те, кто дочитал до конца",
       "Я и мой ноутбук",
       "Я и чемодан вопросов",
       "Я и мои невыключенные уведомления",
-      "Все, кто выжил в этом спринте"
+      "Все, кто выжил в этом спринте",
+      "Только те, кто дочитал до конца"
     ]
   };
 
@@ -818,7 +904,7 @@
   ];
   var WHEEL_SHORT = [
     "Ретро", "Без уведомлений", "Глаза глядят", "К морю",
-    "В горы", "Дешевле всего", "Другой пояс", "Океан"
+    "В горы", "Дешевле всего", "Другой пояс", "Татарстан"
   ];
   var KEY = "retro-flight-v6";
 
@@ -939,19 +1025,155 @@
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var seatPicks = 0;
   var seatEggDone = false;
+  var seatLimit = 1 + Math.floor(Math.random() * 4); /* какой по счёту стул займут */
   var lastPhoto = 2;
+  var lastPlan = 1;
+  var lastTempo = 3;
+  var lastTo = "";
   var snackTimer = null;
+  var once = {};
 
-  function snack(text) {
+  var flyEl = document.getElementById("fly");
+  function flyEmoji(emoji, count) {
+    if (reduced) return;
+    for (var i = 0; i < count; i++) {
+      (function (i) {
+        var b = document.createElement("b");
+        b.textContent = emoji;
+        b.style.left = (4 + Math.random() * 88) + "vw";
+        b.style.animationDelay = (i * 0.13) + "s";
+        b.style.fontSize = (28 + Math.random() * 26) + "px";
+        flyEl.appendChild(b);
+        setTimeout(function () { b.remove(); }, 2400 + i * 130);
+      })(i);
+    }
+  }
+
+  function snack(text, link, ttl) {
     var old = document.querySelector(".snack");
     if (old) old.remove();
     clearTimeout(snackTimer);
     var el = document.createElement("div");
     el.className = "snack";
     el.setAttribute("role", "status");
-    el.textContent = text;
+    el.appendChild(document.createTextNode(text));
+    if (link) {
+      var a = document.createElement("a");
+      a.href = link.href;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = link.text;
+      el.appendChild(a);
+    }
     document.body.appendChild(el);
-    snackTimer = setTimeout(function () { el.remove(); }, 3200);
+    snackTimer = setTimeout(function () { el.remove(); }, ttl || 3200);
+  }
+
+  /* обратный отсчёт в шапке */
+  var statusEl = document.getElementById("status");
+  var statusText = document.getElementById("status-text");
+  var countdownTimer = null;
+  var countdownLeft = 0;
+  var statusClicks = 0;
+  var statusBusy = false;
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  function startCountdown() {
+    stopCountdown();
+    countdownLeft = 5 * 3600 + 59 * 60 + 58;
+    tickCountdown();
+    countdownTimer = setInterval(tickCountdown, 1000);
+  }
+  function tickCountdown() {
+    if (countdownLeft <= 0) { stopCountdown(); return; }
+    countdownLeft--;
+    if (statusBusy) return;
+    var h = Math.floor(countdownLeft / 3600);
+    var m = Math.floor((countdownLeft % 3600) / 60);
+    var s = countdownLeft % 60;
+    statusText.textContent = "до вылета " + h + ":" + pad(m) + ":" + pad(s);
+  }
+  function stopCountdown() {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+    if (!statusBusy) statusText.textContent = "посадка открыта";
+  }
+
+  statusEl.addEventListener("click", function () {
+    statusClicks++;
+    if (statusClicks < 5 || statusBusy) return;
+    statusClicks = 0;
+    statusBusy = true;
+    statusEl.classList.add("closed");
+    statusText.textContent = "посадка закрыта";
+    setTimeout(function () {
+      statusBusy = false;
+      statusEl.classList.remove("closed");
+      statusText.textContent = countdownTimer ? statusText.textContent : "посадка открыта";
+      if (countdownTimer) tickCountdown();
+    }, 3000);
+  });
+
+  /* Татарстан */
+  /* плеер песни: файл song.mp3 должен лежать рядом со страницей */
+  var songEl = document.getElementById("song");
+  var playerEl = document.getElementById("player");
+  var playerBtn = document.getElementById("player-btn");
+  var songBroken = false;
+
+  function showPlayer(v) { playerEl.hidden = !v || songBroken; }
+
+  playerBtn.addEventListener("click", function () {
+    if (songEl.paused) {
+      var pr = songEl.play();
+      playerBtn.textContent = "⏸️";
+      if (pr && pr.catch) {
+        pr.catch(function () {
+          playerBtn.textContent = "▶️";
+          snack("Файл song.mp3 не найден рядом со страницей");
+        });
+      }
+    } else {
+      songEl.pause();
+      playerBtn.textContent = "▶️";
+    }
+  });
+  songEl.addEventListener("ended", function () { playerBtn.textContent = "▶️"; });
+  songEl.addEventListener("error", function () {
+    songBroken = true;
+    playerEl.hidden = true;
+  });
+
+  var tickerEl = document.querySelector(".ticker");
+  var tickerRun = document.querySelector(".ticker .run");
+  var tickerHTML = tickerRun.innerHTML;
+  var tickerTimer = null;
+
+  function tickerSay(phrase, ms, rush) {
+    clearTimeout(tickerTimer);
+    var line = "";
+    for (var i = 0; i < 10; i++) { line += "<span>" + phrase + "</span><span>·</span>"; }
+    tickerRun.innerHTML = line;
+    tickerEl.classList.toggle("rush", !!rush);
+    tickerTimer = setTimeout(resetTicker, ms);
+  }
+  function resetTicker() {
+    clearTimeout(tickerTimer);
+    tickerTimer = null;
+    tickerEl.classList.remove("rush");
+    if (tickerRun.innerHTML !== tickerHTML) tickerRun.innerHTML = tickerHTML;
+  }
+
+  function rushTicker() { tickerSay("гейт закрывается", 5000, true); }
+
+  function tatarstan() {
+    snack("Мин яратам сине, Татарстан", {
+      text: "включить",
+      href: "https://www.youtube.com/watch?v=yQpx5gwOgVU"
+    }, 7000);
+    tickerSay("мин яратам сине, татарстан", 14000, false);
+    showPlayer(true);
   }
 
   var flashEl = document.getElementById("flash");
@@ -1043,9 +1265,56 @@
     if (e.key === "Escape" && !wheelModal.hidden) wheelModal.hidden = true;
   });
 
+  var tipTimer = null;
+  function tip(box, text) {
+    var old = document.querySelector(".tip");
+    if (old) old.remove();
+    clearTimeout(tipTimer);
+    if (!box) return;
+    var el = document.createElement("div");
+    el.className = "tip";
+    el.setAttribute("role", "status");
+    el.textContent = text;
+    box.appendChild(el);
+    tipTimer = setTimeout(function () { el.remove(); }, 3400);
+  }
+
+  var filtersPanel = document.querySelector(".filters");
+  function filterEgg(btn) {
+    var label = labelOf(btn);
+
+    if (label === "Хлопаю при посадке" && !once.clap) {
+      once.clap = true;
+      flyEmoji("👏", 9);
+      tip(btn, "Спасибо экипажу за полёт!");
+      return;
+    }
+    if (label === "Встаю за сумкой до полной остановки") {
+      tip(btn, "Сядьте, пожалуйста, самолёт ещё не остановился");
+      filtersPanel.classList.add("frozen");
+      setTimeout(function () { filtersPanel.classList.remove("frozen"); }, 1800);
+      return;
+    }
+    if (label === "Вбегаю в закрывающийся гейт") {
+      rushTicker();
+    }
+  }
+
+  function syncCountdown() {
+    var early = document.querySelector("[data-early]");
+    var on = early && early.getAttribute("aria-pressed") === "true";
+    if (on && !countdownTimer) { startCountdown(); }
+    if (!on && countdownTimer) { stopCountdown(); }
+  }
+
   function syncStamps(count) {
     while (stamps.length < count) { stamps.push(randomStamp()); }
     if (stamps.length > count) { stamps.length = count; }
+    stampsEl.classList.toggle("dense", stamps.length >= 10);
+    if (stamps.length >= 10 && !once.passport) {
+      once.passport = true;
+      tip(document.getElementById("stamps-wrap"), "Паспорт заполнен, нужен новый");
+    }
     stampsEl.innerHTML = "";
     if (!stamps.length) {
       var none = document.createElement("span");
@@ -1102,10 +1371,18 @@
     routeLine.appendChild(document.createTextNode(" " + val("to", "Куда-то")));
 
     metaLine.textContent = "вылет: " + val("when", "когда-нибудь") + "   ·   пассажиры: " + val("who", "я один");
+
+    if (inputs.to.value !== lastTo) {
+      lastTo = inputs.to.value;
+      if (/татарстан/i.test(lastTo)) tatarstan();
+    }
     found.textContent = String(on.length);
-    stubN.innerHTML = on.length + "<small>фильтров</small>";
+    var charter = on.length > 16;
+    document.querySelector(".ticket").classList.toggle("charter", charter);
+    stubN.innerHTML = on.length + "<small>" + (charter ? "чартер" : "фильтров") + "</small>";
     verdict.textContent = verdictFor(on.length);
     syncStamps(on.length);
+    syncCountdown();
     save();
   }
 
@@ -1116,12 +1393,7 @@
         plan: sliders.plan.value, tempo: sliders.tempo.value, photo: sliders.photo.value,
         from: inputs.from.value, to: inputs.to.value,
         when: inputs.when.value, who: inputs.who.value,
-        stamps: stamps,
-        seatPicks: seatPicks,
-        seatEggDone: seatEggDone,
-        taken: Array.prototype.slice.call(document.querySelectorAll(".seat")).map(function (s) {
-          return s.getAttribute("data-taken") === "true" ? 1 : 0;
-        })
+        stamps: stamps
       }));
     } catch (e) { /* приватный режим — просто не сохраняем */ }
   }
@@ -1144,14 +1416,10 @@
       if (Array.isArray(state.stamps)) {
         stamps = state.stamps.filter(function (s) { return typeof s === "string"; });
       }
-      if (typeof state.seatPicks === "number") seatPicks = state.seatPicks;
-      if (state.seatEggDone === true) seatEggDone = true;
       if (state.photo != null) lastPhoto = +state.photo;
-      if (Array.isArray(state.taken)) {
-        document.querySelectorAll(".seat").forEach(function (s, i) {
-          if (state.taken[i]) { s.setAttribute("data-taken", "true"); s.disabled = true; }
-        });
-      }
+      if (state.plan != null) lastPlan = +state.plan;
+      if (state.tempo != null) lastTempo = +state.tempo;
+      if (typeof state.to === "string") lastTo = state.to;
     } catch (e) { /* игнорируем битое состояние */ }
   }
 
@@ -1164,7 +1432,7 @@
 
       if (btn.classList.contains("seat") && !was) {
         seatPicks++;
-        if (seatPicks === 3 && !seatEggDone) {
+        if (seatPicks === seatLimit && !seatEggDone) {
           seatEggDone = true;
           btn.setAttribute("data-taken", "true");
           btn.disabled = true;
@@ -1187,16 +1455,29 @@
       btn.setAttribute("aria-pressed", was ? "false" : "true");
       render();
 
+      resetTicker();
       if (!was && btn.hasAttribute("data-wheel")) spinWheel();
+      if (!was) filterEgg(btn);
     });
   });
 
   Object.keys(sliders).forEach(function (k) {
     sliders[k].addEventListener("input", function () {
+      var now = +sliders[k].value;
       if (k === "photo") {
-        var now = +sliders.photo.value;
         if (now === 4 && lastPhoto !== 4) shutter();
         lastPhoto = now;
+      }
+      if (k === "plan") {
+        if (now === 0 && lastPlan !== 0) tip(sliders.plan.closest(".slider"), "Пришлите нам, пожалуйста, эту таблицу");
+        lastPlan = now;
+      }
+      if (k === "tempo") {
+        if (now === 4 && lastTempo !== 4) {
+          flyEmoji("👟", 7);
+          tip(sliders.tempo.closest(".slider"), "Ноги завтра отвалятся точно");
+        }
+        lastTempo = now;
       }
       render();
     });
@@ -1205,7 +1486,54 @@
   document.getElementById("reset").addEventListener("click", function () {
     allControls().forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
     sliders.plan.value = 2; sliders.tempo.value = 2; sliders.photo.value = 2;
+    lastPlan = 2; lastTempo = 2; lastPhoto = 2;
+    freeSeats();
+    stopCountdown();
     render();
+  });
+
+  /* места освобождаются: и при сбросе, и при перезагрузке */
+  function freeSeats() {
+    document.querySelectorAll(".seat").forEach(function (s) {
+      s.removeAttribute("data-taken");
+      s.disabled = false;
+    });
+    seatPicks = 0;
+    seatEggDone = false;
+    seatLimit = 1 + Math.floor(Math.random() * 4);
+  }
+
+  /* штрихкод не читается */
+  var barcodeEl = document.querySelector(".barcode");
+  barcodeEl.style.cursor = "pointer";
+  barcodeEl.addEventListener("click", function () {
+    var stops = [];
+    var pos = 0;
+    while (pos < 60) {
+      var w = 1 + Math.floor(Math.random() * 4);
+      stops.push("var(--ink) " + pos + "px " + (pos + w) + "px");
+      pos += w;
+      var gap = 2 + Math.floor(Math.random() * 4);
+      stops.push("transparent " + pos + "px " + (pos + gap) + "px");
+      pos += gap;
+    }
+    barcodeEl.style.background = "repeating-linear-gradient(90deg, " + stops.join(", ") + ")";
+    snack("Штрихкод не читается, попробуйте ещё раз");
+  });
+
+  /* секретное слово */
+  var typed = "";
+  document.addEventListener("keydown", function (e) {
+    if (e.key.length !== 1) return;
+    if (document.activeElement && document.activeElement.tagName === "INPUT") return;
+    typed = (typed + e.key.toLowerCase()).slice(-12);
+    if ((typed.indexOf("апгрейд") !== -1 || typed.indexOf("upgrade") !== -1) && !once.business) {
+      once.business = true;
+      document.body.classList.add("business");
+      document.querySelector(".cabin .cap.nose").textContent = "нос · бизнес-класс";
+      flyEmoji("🥂", 6);
+      snack("Апгрейд подтверждён: первый ряд теперь бизнес-класс");
+    }
   });
 
   restore();
