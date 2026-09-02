@@ -1,268 +1,304 @@
 <title>Ретро-рейс</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Onest:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap">
 <style>
   :root {
-    --ground: #EDF1F5;
+    --ground: #E9EAEC;
     --surface: #FFFFFF;
-    --surface-2: #F6F9FB;
-    --ink: #0F1A24;
-    --muted: #64798B;
-    --line: #D8E1E9;
-    --line-soft: #E7EDF2;
-    --accent: #0B63C5;
-    --accent-soft: #E2EDFB;
-    --hot: #D9551F;
-    --hot-soft: #FBE9E0;
-    --shadow: 0 1px 2px rgba(15,26,36,.06), 0 8px 24px rgba(15,26,36,.05);
+    --surface-2: #F4F5F6;
+    --ink: #101114;
+    --muted: #6B7078;
+    --line: #D5D8DC;
+    --line-soft: #E6E8EA;
+    --edge: #101114;
+    --accent: #2B4BFF;
+    --accent-soft: #E4E8FF;
+    --signal: #FFD400;
+    --always-dark: #101114;
+
+    --header: #101114;
+    --header-2: #1C1F26;
+    --header-line: #33373F;
+    --header-ink: #F5F5F6;
+    --header-muted: #969CA6;
+
     --display: "Unbounded", "Trebuchet MS", sans-serif;
-    --body: "Golos Text", "Segoe UI", system-ui, sans-serif;
-    --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+    --body: "Onest", "Segoe UI", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --ground: #0C131A;
-      --surface: #151F29;
-      --surface-2: #1A2632;
-      --ink: #E9EFF5;
-      --muted: #94A6B6;
-      --line: #2A3846;
-      --line-soft: #212D39;
-      --accent: #5FA9F6;
-      --accent-soft: #16334E;
-      --hot: #FF8B57;
-      --hot-soft: #38221A;
-      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.28);
+      --ground: #0E0F13;
+      --surface: #191B21;
+      --surface-2: #14161B;
+      --ink: #F1F2F4;
+      --muted: #969CA6;
+      --line: #2C3039;
+      --line-soft: #23262E;
+      --edge: #454B57;
+      --accent: #7B90FF;
+      --accent-soft: #1E2440;
     }
   }
   :root[data-theme="dark"] {
-    --ground: #0C131A;
-    --surface: #151F29;
-    --surface-2: #1A2632;
-    --ink: #E9EFF5;
-    --muted: #94A6B6;
-    --line: #2A3846;
-    --line-soft: #212D39;
-    --accent: #5FA9F6;
-    --accent-soft: #16334E;
-    --hot: #FF8B57;
-    --hot-soft: #38221A;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.28);
+    --ground: #0E0F13;
+    --surface: #191B21;
+    --surface-2: #14161B;
+    --ink: #F1F2F4;
+    --muted: #969CA6;
+    --line: #2C3039;
+    --line-soft: #23262E;
+    --edge: #454B57;
+    --accent: #7B90FF;
+    --accent-soft: #1E2440;
   }
 
   * { box-sizing: border-box; }
   body {
-    margin: 0;
-    background: var(--ground);
-    color: var(--ink);
-    font-family: var(--body);
-    font-size: 15px;
-    line-height: 1.45;
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--body); font-size: 15px; line-height: 1.45;
     -webkit-font-smoothing: antialiased;
   }
   button { font: inherit; color: inherit; }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  /* ---------- top bar ---------- */
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--line);
-    padding: 18px 24px 20px;
-  }
-  .topbar-inner { max-width: 1140px; margin: 0 auto; }
-  .brand {
-    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
-    margin-bottom: 16px;
-  }
+  /* ---------- header ---------- */
+  .topbar { background: var(--header); color: var(--header-ink); padding: 22px 24px 20px; position: relative; z-index: 5; }
+  .topbar-inner { max-width: 1160px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
   .brand h1 {
-    font-family: var(--display);
-    font-size: 20px; font-weight: 600; letter-spacing: -.01em;
-    margin: 0;
+    font-family: var(--display); font-size: 21px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: -.02em; margin: 0;
   }
-  .brand .sub { color: var(--muted); font-size: 13px; }
+  .status {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--signal);
+    border: 1px solid var(--header-line); border-radius: 999px; padding: 4px 11px;
+  }
+  .status .dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--signal);
+    animation: blink 1.9s ease-in-out infinite;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1 } 50% { opacity: .25 } }
+  .brand .sub { font-size: 13.5px; color: var(--header-muted); margin-left: auto; }
 
-  .searchbar {
-    display: grid;
-    grid-template-columns: 1.35fr 1.35fr .85fr .85fr;
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    overflow: hidden;
+  .searchbar { display: grid; grid-template-columns: 1.3fr 1.3fr .9fr .9fr; gap: 8px; }
+  .field {
+    position: relative; background: var(--header-2);
+    border: 1px solid var(--header-line); border-radius: 12px;
+    padding: 9px 13px 11px; min-width: 0;
+    transition: border-color .15s;
   }
-  .searchbar > div { background: var(--surface-2); padding: 9px 14px 10px; min-width: 0; }
-  .searchbar .lbl {
-    display: block; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 3px;
+  .field:hover { border-color: var(--header-muted); }
+  .field:focus-within, .field.open { border-color: var(--signal); }
+  .field .lbl {
+    display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--header-muted); margin-bottom: 3px;
   }
-  .searchbar .val {
-    display: block; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  .field .row { display: flex; align-items: center; gap: 8px; }
+  .field input {
+    flex: 1 1 auto; min-width: 0; border: 0; background: none; padding: 0;
+    font-family: var(--body); font-size: 15px; font-weight: 500; color: var(--header-ink);
   }
-  .searchbar input.val {
-    width: 100%; border: 0; background: none; padding: 0;
-    font-family: var(--body); font-size: 15px; color: var(--ink);
-    border-bottom: 1px dashed var(--line);
+  .field input:focus { outline: none; }
+  .field input::placeholder { color: var(--header-muted); font-weight: 400; }
+  .caret {
+    flex: 0 0 auto; width: 22px; height: 22px; padding: 0; border: 0;
+    background: none; cursor: pointer; color: var(--header-muted);
+    display: grid; place-items: center; border-radius: 6px;
   }
-  .searchbar input.val:focus { outline: none; border-bottom-color: var(--hot); }
-  .searchbar input.val::placeholder { color: var(--muted); }
+  .caret:hover { color: var(--signal); background: rgba(255,255,255,.07); }
+  .caret svg { display: block; transition: transform .18s ease; }
+  .field.open .caret svg { transform: rotate(180deg); }
+
+  .options {
+    position: absolute; z-index: 30; left: -1px; right: -1px; top: calc(100% + 6px);
+    background: var(--header-2); border: 1px solid var(--header-line); border-radius: 12px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.45); padding: 6px; max-height: 264px; overflow-y: auto;
+  }
+  .options[hidden] { display: none; }
+  .options button {
+    display: block; width: 100%; text-align: left; cursor: pointer;
+    border: 0; background: none; border-radius: 8px; color: var(--header-ink);
+    padding: 8px 11px; font-size: 13.5px; line-height: 1.3;
+  }
+  .options button:hover { background: rgba(255,255,255,.08); color: var(--signal); }
+  .options button[aria-selected="true"] { color: var(--signal); }
+
+  /* ---------- ticker ---------- */
+  .ticker {
+    background: var(--signal); color: var(--always-dark);
+    border-top: 1px solid var(--header); border-bottom: 1px solid var(--edge);
+    overflow: hidden; white-space: nowrap; padding: 7px 0;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
+  }
+  .ticker .run { display: inline-block; animation: slide 34s linear infinite; }
+  .ticker .run span { padding: 0 26px; }
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   /* ---------- layout ---------- */
   .layout {
-    max-width: 1140px;
-    margin: 0 auto;
-    padding: 22px 24px 56px;
-    display: grid;
-    grid-template-columns: 356px minmax(0, 1fr);
-    gap: 22px;
+    max-width: 1160px; margin: 0 auto; padding: 22px 24px 60px;
+    display: grid; grid-template-columns: 358px minmax(0, 1fr); gap: 20px;
   }
 
   /* ---------- filters ---------- */
   .filters {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 4px 16px 16px;
-    align-self: start;
+    background: var(--surface); border: 1px solid var(--edge); border-radius: 16px;
+    padding: 4px 18px 18px; align-self: start;
   }
-  .fgroup { border-bottom: 1px solid var(--line-soft); padding: 16px 0; }
+  .fgroup { border-bottom: 1px solid var(--line-soft); padding: 18px 0; }
   .fgroup:last-child { border-bottom: 0; padding-bottom: 6px; }
   .fgroup h2 {
-    font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 11px;
+    font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 13px;
   }
 
   /* pills */
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .pill {
-    border: 1px solid var(--line);
-    background: var(--surface-2);
-    border-radius: 999px;
-    padding: 6px 12px;
-    font-size: 13px;
-    cursor: pointer;
-    text-align: left;
-    transition: background .12s, border-color .12s, color .12s;
+    border: 1px solid var(--line); background: var(--surface);
+    border-radius: 9px; padding: 7px 12px; font-size: 13px; font-weight: 500;
+    cursor: pointer; text-align: left;
+    transition: background .14s, border-color .14s, color .14s, transform .14s;
   }
-  .pill:hover { border-color: var(--hot); }
+  .pill:hover { border-color: var(--edge); transform: translateY(-1px); }
   .pill[aria-pressed="true"] {
-    background: var(--hot-soft); border-color: var(--hot); color: var(--hot); font-weight: 500;
+    background: var(--accent); border-color: var(--accent); color: #fff;
   }
 
   /* segmented */
   .segmented {
-    display: flex; flex-direction: column; gap: 2px;
-    background: var(--surface-2); border: 1px solid var(--line);
-    border-radius: 10px; padding: 3px;
+    display: grid; gap: 1px; background: var(--line);
+    border: 1px solid var(--line); border-radius: 11px; overflow: hidden;
   }
   .seg {
-    border: 0; background: none; border-radius: 7px;
-    padding: 8px 11px; font-size: 13px; text-align: left; cursor: pointer;
+    border: 0; background: var(--surface); padding: 10px 13px;
+    font-size: 13px; font-weight: 500; text-align: left; cursor: pointer;
+    transition: background .14s, color .14s;
   }
-  .seg:hover { color: var(--hot); }
-  .seg[aria-pressed="true"] {
-    background: var(--surface); color: var(--hot); font-weight: 500;
-    box-shadow: 0 1px 2px rgba(15,26,36,.1);
-  }
+  .seg:hover { background: var(--surface-2); }
+  .seg[aria-pressed="true"] { background: var(--accent); color: #fff; }
 
   /* ---------- cabin ---------- */
   .cabin {
-    border: 1px solid var(--line);
-    background: var(--surface-2);
-    border-radius: 46% 46% 14px 14px / 56px 56px 14px 14px;
-    padding: 14px 14px 10px;
-    display: grid;
-    grid-template-columns: 15px repeat(2, 1fr) 13px repeat(2, 1fr);
-    gap: 5px;
-    align-items: center;
-    position: relative;
+    border: 1px solid var(--line); background: var(--surface-2);
+    border-radius: 44% 44% 12px 12px / 54px 54px 12px 12px;
+    padding: 14px 14px 11px;
+    display: grid; grid-template-columns: 15px repeat(2, 1fr) 14px repeat(2, 1fr);
+    gap: 5px; align-items: center;
   }
   .cabin .cap {
     grid-column: 1 / -1; text-align: center;
-    font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--muted);
   }
-  .cabin .cap.nose { margin-bottom: 2px; }
-  .cabin .cap.tail { margin-top: 4px; }
-  .cabin .rownum {
-    font-family: var(--mono); font-size: 10.5px; color: var(--muted); text-align: center;
-  }
+  .cabin .cap.tail { margin-top: 5px; }
+  .cabin .rownum { font-family: var(--mono); font-size: 10.5px; color: var(--muted); text-align: center; }
   .seat {
     height: 34px; border: 1px solid var(--line); background: var(--surface);
-    border-radius: 5px 5px 9px 9px;
+    border-radius: 5px 5px 10px 10px;
     font-family: var(--mono); font-size: 11px; color: var(--muted);
     cursor: pointer; position: relative; padding: 0;
+    transition: transform .14s ease, background .14s, border-color .14s, color .14s;
   }
   .seat::before {
-    content: ""; position: absolute; left: 5px; right: 5px; top: 3px; height: 4px;
-    border-radius: 2px; background: var(--line);
+    content: ""; position: absolute; left: 5px; right: 5px; top: 4px; height: 4px;
+    border-radius: 2px; background: var(--line); transition: background .14s;
   }
-  .seat:hover { border-color: var(--hot); color: var(--hot); }
+  .seat:hover { border-color: var(--edge); color: var(--ink); transform: translateY(-2px); }
   .seat[aria-pressed="true"] {
-    background: var(--hot); border-color: var(--hot); color: #fff; font-weight: 500;
+    background: var(--accent); border-color: var(--accent); color: #fff;
+    animation: seatPop .34s cubic-bezier(.34, 1.56, .64, 1);
   }
   .seat[aria-pressed="true"]::before { background: rgba(255,255,255,.55); }
-  .cabin-note { font-size: 11px; color: var(--muted); margin: 8px 0 8px; line-height: 1.35; }
+  @keyframes seatPop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.18) translateY(-3px); }
+    100% { transform: scale(1); }
+  }
+  .cabin-note { font-size: 11.5px; color: var(--muted); margin: 10px 0; line-height: 1.4; }
   .seat-any {
     width: 100%; border: 1px dashed var(--line); background: none;
-    border-radius: 9px; padding: 9px 12px; font-size: 13px; cursor: pointer; text-align: left;
+    border-radius: 10px; padding: 10px 13px; font-size: 13px; font-weight: 500;
+    cursor: pointer; text-align: left;
+    transition: transform .14s ease, background .14s, border-color .14s, color .14s;
   }
-  .seat-any:hover { border-color: var(--hot); color: var(--hot); }
+  .seat-any:hover { border-color: var(--edge); }
   .seat-any[aria-pressed="true"] {
-    border-style: solid; border-color: var(--hot); background: var(--hot-soft);
-    color: var(--hot); font-weight: 500;
+    border-style: solid; border-color: var(--accent); background: var(--accent); color: #fff;
+    animation: seatPop .34s cubic-bezier(.34, 1.56, .64, 1);
   }
 
   /* checklist */
-  .checklist { display: flex; flex-direction: column; }
+  .checklist { display: flex; flex-direction: column; gap: 1px; }
   .check {
-    display: flex; align-items: flex-start; gap: 9px;
-    border: 0; background: none; cursor: pointer;
-    padding: 7px 2px; font-size: 13.5px; text-align: left;
-    border-bottom: 1px solid var(--line-soft);
+    display: flex; align-items: flex-start; gap: 10px;
+    border: 0; background: none; cursor: pointer; border-radius: 9px;
+    padding: 8px 9px; font-size: 13.5px; font-weight: 500; text-align: left;
+    transition: background .14s, color .14s;
   }
-  .checklist .check:last-child { border-bottom: 0; }
   .check::before {
     content: "✓"; flex: 0 0 auto;
-    width: 17px; height: 17px; margin-top: 1px;
-    border: 1.5px solid var(--line); border-radius: 5px;
-    background: var(--surface);
-    font-size: 11px; line-height: 14px; text-align: center; color: transparent;
+    width: 18px; height: 18px; border: 1px solid var(--line); border-radius: 5px;
+    background: var(--surface); color: transparent;
+    font-size: 11px; line-height: 16px; text-align: center; font-weight: 700;
+    transition: background .14s, border-color .14s, color .14s;
   }
-  .check:hover { color: var(--hot); }
-  .check[aria-pressed="true"] { color: var(--hot); }
-  .check[aria-pressed="true"]::before { background: var(--hot); border-color: var(--hot); color: #fff; }
   .check[data-exclusive]::before { border-radius: 50%; }
+  .check:hover { background: var(--surface-2); }
+  .check[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); }
+  .check[aria-pressed="true"]::before { background: var(--accent); border-color: var(--accent); color: #fff; }
 
   /* sliders */
-  .slider { margin-bottom: 16px; }
+  .slider { margin-bottom: 18px; }
   .slider:last-child { margin-bottom: 0; }
-  .slider .cap { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
-  .slider .cap b { font-size: 13px; font-weight: 500; }
-  .slider .cap output { font-family: var(--mono); font-size: 11.5px; color: var(--hot); text-align: right; }
-  .slider input[type="range"] { width: 100%; accent-color: var(--hot); margin: 0; }
+  .slider .cap { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .slider .cap b { font-size: 13px; font-weight: 600; }
+  .slider .cap output {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; text-align: right;
+    background: var(--signal); color: var(--always-dark); padding: 2px 7px; border-radius: 4px;
+  }
+  .slider input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 6px; margin: 0; padding: 0; cursor: pointer;
+    background: var(--line); border-radius: 999px;
+  }
+  .slider input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  .slider input[type="range"]::-moz-range-thumb {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent); border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--accent);
+  }
   .slider .ends {
-    display: flex; justify-content: space-between;
-    font-size: 11px; color: var(--muted); margin-top: 2px;
+    display: flex; justify-content: space-between; gap: 10px;
+    font-size: 11px; color: var(--muted); margin-top: 7px;
   }
 
   /* switches */
-  .switches { display: flex; flex-direction: column; gap: 3px; }
+  .switches { display: flex; flex-direction: column; gap: 1px; }
   .switch {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    border: 0; background: none; cursor: pointer;
-    padding: 7px 2px; font-size: 13.5px; text-align: left;
+    border: 0; background: none; cursor: pointer; border-radius: 9px;
+    padding: 8px 9px; font-size: 13.5px; font-weight: 500; text-align: left;
+    transition: background .14s, color .14s;
   }
-  .switch:hover { color: var(--hot); }
+  .switch:hover { background: var(--surface-2); }
   .switch i {
     flex: 0 0 auto; width: 34px; height: 20px; border-radius: 999px;
-    background: var(--line); position: relative; transition: background .15s;
+    background: var(--line); position: relative; transition: background .16s;
   }
   .switch i::after {
     content: ""; position: absolute; top: 2px; left: 2px;
     width: 16px; height: 16px; border-radius: 50%; background: var(--surface);
-    transition: transform .15s;
-    box-shadow: 0 1px 2px rgba(15,26,36,.25);
+    transition: transform .16s cubic-bezier(.34, 1.4, .64, 1);
   }
-  .switch[aria-pressed="true"] { color: var(--hot); }
-  .switch[aria-pressed="true"] i { background: var(--hot); }
+  .switch[aria-pressed="true"] { color: var(--accent); }
+  .switch[aria-pressed="true"] i { background: var(--accent); }
   .switch[aria-pressed="true"] i::after { transform: translateX(14px); }
 
   /* ---------- results ---------- */
@@ -271,110 +307,133 @@
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     flex-wrap: wrap; padding: 0 2px;
   }
-  .results-head .count { font-size: 13px; color: var(--muted); }
-  .results-head .count b { color: var(--ink); font-weight: 600; }
-  .btn {
-    border: 1px solid var(--line); background: var(--surface);
-    border-radius: 8px; padding: 7px 13px; font-size: 13px; cursor: pointer;
+  .results-head .count {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--muted);
   }
-  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .results-head .count b { color: var(--ink); }
+  .btn {
+    border: 1px solid var(--edge); background: var(--surface);
+    border-radius: 999px; padding: 7px 16px; font-size: 12.5px; font-weight: 600;
+    cursor: pointer; transition: background .14s, color .14s;
+  }
+  .btn:hover { background: var(--ink); color: var(--surface); }
 
   .ticket {
-    position: sticky; top: 14px;
-    background: var(--surface);
-    border: 1px solid var(--hot);
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 200px;
+    position: sticky; top: 16px;
+    background: var(--surface); border: 1px solid var(--edge); border-radius: 16px;
+    display: grid; grid-template-columns: minmax(0, 1fr) 208px;
   }
-  .ticket .body { padding: 20px 22px; min-width: 0; }
+  .ticket::before, .ticket::after {
+    content: ""; position: absolute; right: 200px;
+    width: 17px; height: 17px; border-radius: 50%;
+    background: var(--ground); border: 1px solid var(--edge);
+  }
+  .ticket::before { top: -9px; clip-path: inset(50% -2px -2px -2px); }
+  .ticket::after { bottom: -9px; clip-path: inset(-2px -2px 50% -2px); }
+  .ticket .body { padding: 22px 24px; min-width: 0; }
   .ticket .stub {
-    border-left: 1px dashed var(--line);
-    padding: 20px;
-    display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
-    background: var(--surface-2);
-    border-radius: 0 12px 12px 0;
+    border-left: 1px dashed var(--edge); padding: 22px 20px;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
+    background: var(--surface-2); border-radius: 0 15px 15px 0;
   }
-  .ticket .who { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 7px; }
-  .ticket .who strong { font-size: 16px; font-weight: 600; }
-  .tag-route {
-    font-family: var(--mono); font-size: 11.5px;
-    background: var(--hot-soft); color: var(--hot);
-    padding: 3px 9px; border-radius: 5px;
-    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  .ticket .kicker {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
   }
-  .ticket .scales {
-    font-family: var(--mono); font-size: 12px; color: var(--muted);
-    margin-bottom: 14px;
+  .ticket .route {
+    font-family: var(--display); font-size: 21px; font-weight: 600; line-height: 1.2;
+    letter-spacing: -.02em; margin-bottom: 10px; text-wrap: balance;
   }
-  .picked { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+  .ticket .route em { font-style: normal; color: var(--muted); }
+  .ticket .meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    margin-bottom: 4px; letter-spacing: .02em;
+  }
+  .ticket .scales { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .picked { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .picked span {
-    border: 1px solid transparent; border-radius: 999px;
-    padding: 4px 11px; font-size: 12.5px; line-height: 1.35;
+    border: 1px solid var(--line); border-radius: 8px;
+    padding: 5px 11px; font-size: 12.5px; font-weight: 500; line-height: 1.35;
   }
-  .picked .empty { color: var(--muted); padding: 0; font-size: 13.5px; }
+  .picked .empty { border: 0; color: var(--muted); padding: 0; font-size: 13.5px; }
 
-  /* per-group looks on the receipt */
   .picked .c-bag {
-    background: var(--hot-soft); color: var(--hot);
-    border-radius: 5px; padding-left: 24px; position: relative;
+    border-color: var(--accent); color: var(--accent);
+    border-radius: 4px 12px 12px 4px; padding-left: 24px; position: relative;
   }
   .picked .c-bag::before {
     content: ""; position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
-    width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid currentColor;
+    width: 7px; height: 7px; border-radius: 50%; border: 1px solid currentColor;
   }
   .picked .c-air {
-    font-family: var(--mono); font-size: 11.5px;
-    border: 1px dashed var(--hot); color: var(--hot); border-radius: 6px;
+    border-style: dashed; border-color: var(--muted);
+    font-family: var(--mono); font-size: 11px;
   }
   .picked .c-seat {
-    background: var(--ink); color: var(--ground); border-color: var(--ink);
-    font-family: var(--mono); font-size: 11.5px; border-radius: 4px;
+    background: var(--ink); color: var(--surface); border-color: var(--ink);
+    font-family: var(--mono); font-size: 11px; border-radius: 5px;
   }
-  .picked .c-fly { background: var(--accent-soft); color: var(--accent); }
+  .picked .c-fly { background: var(--accent-soft); border-color: var(--accent-soft); color: var(--accent); }
   .picked .c-fly::before { content: "✓ "; }
-  .picked .c-place { background: var(--hot-soft); color: var(--hot); }
-  .picked .c-back { border-color: var(--hot); color: var(--hot); }
+  .picked .c-place { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .picked .c-back { border-color: var(--ink); border-radius: 12px; }
   .picked .c-back::before { content: "↺ "; }
   .picked .c-rule {
-    border-color: var(--line); color: var(--ink);
-    font-size: 11.5px; letter-spacing: .03em; padding-left: 10px;
+    background: var(--signal); border-color: var(--signal); color: var(--always-dark);
+    padding-left: 10px;
   }
-  .picked .c-rule::before { content: "●"; color: var(--hot); font-size: 8px; vertical-align: 2px; margin-right: 6px; }
+  .picked .c-rule::before { content: "●"; font-size: 7px; vertical-align: 3px; margin-right: 7px; }
 
   .stub .n {
-    font-family: var(--mono); font-size: 28px; font-weight: 500;
-    line-height: 1; font-variant-numeric: tabular-nums;
+    font-family: var(--display); font-size: 46px; font-weight: 700;
+    line-height: .9; letter-spacing: -.04em;
   }
   .stub .n small {
-    display: block; font-family: var(--body); font-size: 11.5px;
-    color: var(--muted); margin-top: 5px;
+    display: block; font-family: var(--mono); font-size: 9.5px; font-weight: 400;
+    letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-top: 9px;
   }
-  .stub .verdict { font-size: 12.5px; color: var(--hot); line-height: 1.3; }
+  .stub .verdict {
+    font-size: 13px; font-weight: 600; line-height: 1.25;
+    background: var(--signal); color: var(--always-dark);
+    padding: 8px 10px; border-radius: 4px;
+  }
   .stub .barcode {
-    height: 30px; border-radius: 2px; opacity: .45;
+    height: 34px;
     background: repeating-linear-gradient(90deg,
       var(--ink) 0 2px, transparent 2px 4px,
       var(--ink) 4px 5px, transparent 5px 9px,
       var(--ink) 9px 12px, transparent 12px 14px);
   }
-  .stub .code { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .stub .stamps { display: flex; flex-wrap: wrap; gap: 6px 7px; }
+  .stub .stamps button {
+    border: 0; background: none; padding: 0; cursor: pointer;
+    font-size: 20px; line-height: 1;
+    animation: stampIn .32s cubic-bezier(.34, 1.56, .64, 1);
+    transition: transform .12s;
+  }
+  .stub .stamps button:hover { transform: scale(1.18) rotate(-6deg); }
+  .stub .stamps .none { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: var(--muted); }
+  @keyframes stampIn {
+    0% { transform: scale(0) rotate(-25deg); opacity: 0; }
+    60% { transform: scale(1.25) rotate(6deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); }
+  }
 
   @media (max-width: 900px) {
     .layout { grid-template-columns: minmax(0, 1fr); }
     .searchbar { grid-template-columns: 1fr 1fr; }
+    .brand .sub { margin-left: 0; width: 100%; }
     .ticket { grid-template-columns: minmax(0, 1fr); position: static; }
     .ticket .stub {
-      border-left: 0; border-top: 1px dashed var(--line);
-      border-radius: 0 0 12px 12px;
+      border-left: 0; border-top: 1px dashed var(--edge); border-radius: 0 0 15px 15px;
       flex-direction: row; align-items: flex-end; justify-content: space-between;
     }
     .stub .barcode { display: none; }
     .results { order: -1; }
   }
   @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; }
+    *, *::before, *::after { transition: none !important; animation: none !important; }
   }
 </style>
 
@@ -382,22 +441,57 @@
   <div class="topbar-inner">
     <div class="brand">
       <h1>Ретро-рейс</h1>
+      <span class="status"><span class="dot" aria-hidden="true"></span>посадка открыта</span>
       <span class="sub">опиши своё типичное путешествие</span>
     </div>
     <div class="searchbar">
-      <div>
+      <div class="field" data-field="from">
         <label class="lbl" for="from">Откуда</label>
-        <input class="val" id="from" value="Обычный рабочий четверг" maxlength="40" placeholder="например, из офиса">
+        <div class="row">
+          <input id="from" value="Обычный рабочий четверг" maxlength="46" placeholder="выбери или впиши своё">
+          <button class="caret" type="button" aria-label="Показать варианты">
+            <svg width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true"><path d="M1 1l4.5 4.5L10 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="options" hidden></div>
       </div>
-      <div>
+      <div class="field" data-field="to">
         <label class="lbl" for="to">Куда</label>
-        <input class="val" id="to" value="Ретро команды" maxlength="40" placeholder="куда душа просит">
+        <div class="row">
+          <input id="to" value="Ретро команды" maxlength="46" placeholder="выбери или впиши своё">
+          <button class="caret" type="button" aria-label="Показать варианты">
+            <svg width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true"><path d="M1 1l4.5 4.5L10 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="options" hidden></div>
       </div>
-      <div><span class="lbl">Когда</span><span class="val">прямо сейчас</span></div>
-      <div><span class="lbl">Пассажиры</span><span class="val">вся команда</span></div>
+      <div class="field" data-field="when">
+        <label class="lbl" for="when">Когда</label>
+        <div class="row">
+          <input id="when" value="Прямо сейчас" maxlength="46" placeholder="выбери или впиши своё">
+          <button class="caret" type="button" aria-label="Показать варианты">
+            <svg width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true"><path d="M1 1l4.5 4.5L10 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="options" hidden></div>
+      </div>
+      <div class="field" data-field="who">
+        <label class="lbl" for="who">Пассажиры</label>
+        <div class="row">
+          <input id="who" value="Вся команда" maxlength="46" placeholder="выбери или впиши своё">
+          <button class="caret" type="button" aria-label="Показать варианты">
+            <svg width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true"><path d="M1 1l4.5 4.5L10 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="options" hidden></div>
+      </div>
     </div>
   </div>
 </header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="run"><span>посадка открыта</span><span>·</span><span>регистрация закрывается через десять минут</span><span>·</span><span>ручная кладь без ограничений</span><span>·</span><span>задержек нет, честно</span><span>·</span><span>места разбирают</span><span>·</span><span>посадка открыта</span><span>·</span><span>регистрация закрывается через десять минут</span><span>·</span><span>ручная кладь без ограничений</span><span>·</span><span>задержек нет, честно</span><span>·</span><span>места разбирают</span><span>·</span></div>
+</div>
 
 <main class="layout">
   <aside class="filters">
@@ -530,16 +624,15 @@
 
   <section class="results">
     <div class="results-head">
-      <span class="count">Выбрано: <b id="found">6</b></span>
+      <span class="count">Выбрано фильтров: <b id="found">6</b></span>
       <button class="btn" id="reset">Сбросить</button>
     </div>
 
     <article class="ticket">
       <div class="body">
-        <div class="who">
-          <strong>Маршрутная квитанция</strong>
-          <span class="tag-route" id="tag-route">Обычный рабочий четверг → Ретро команды</span>
-        </div>
+        <div class="kicker">Маршрутная квитанция</div>
+        <div class="route" id="route">Обычный рабочий четверг <em>→</em> Ретро команды</div>
+        <div class="meta" id="meta"></div>
         <div class="scales" id="scales"></div>
         <div class="picked" id="picked"></div>
       </div>
@@ -547,16 +640,60 @@
         <span class="n" id="stub-n">6<small>фильтров</small></span>
         <span class="verdict" id="verdict"></span>
         <span class="barcode" aria-hidden="true"></span>
-        <span class="code">RTR&nbsp;001</span>
+        <div class="stamps" id="stamps" title="штамп за каждый фильтр — кликни, чтобы поменять"></div>
       </div>
     </article>
   </section>
 </main>
 
 <script>
+  var OPTIONS = {
+    from: [
+      "Обычный рабочий четверг",
+      "Прямо из спринта",
+      "Из-под пледа",
+      "Из очереди за кофе",
+      "Из созвона, который мог быть письмом",
+      "Из отпуска, который был давно",
+      "С дивана, не вставая",
+      "Из чата, где меня отметили"
+    ],
+    to: [
+      "Ретро команды",
+      "Туда, где нет уведомлений",
+      "Куда глаза глядят",
+      "К морю, срочно",
+      "В горы, где не ловит",
+      "Куда дешевле всего",
+      "В другой часовой пояс",
+      "Домой, но с видом на океан"
+    ],
+    when: [
+      "Прямо сейчас",
+      "Как только закроем спринт",
+      "В ближайшую пятницу",
+      "Когда потеплеет",
+      "Надо было ещё вчера",
+      "После того как всё уляжется",
+      "В отпуске, честное слово",
+      "Как только найдётся билет"
+    ],
+    who: [
+      "Вся команда",
+      "Вся команда и один опоздавший",
+      "Все, кроме тех, кто в отпуске",
+      "Только те, кто дочитал до конца",
+      "Я и мой ноутбук",
+      "Я и чемодан вопросов",
+      "Я, но мысленно",
+      "Я и мои невыключенные уведомления",
+      "Все, кто выжил в этом спринте"
+    ]
+  };
+
   var SCALES = {
     plan:  ["план по часам в таблице", "маршрут набросан", "есть даты и жильё", "есть только билеты", "куда вывезет"],
-    tempo: ["лежать и не двигаться", "лежать, но с прогулкой", "поровну", "много хожу", "20 км пешком в день"],
+    tempo: ["лежать и не двигаться", "лежать, но с прогулкой", "день гуляю, день лежу", "много хожу", "20 км пешком в день"],
     photo: ["ни одной фотографии", "пара кадров", "нормальный альбом", "снимаю всё подряд", "две тысячи фотографий"]
   };
   var VERDICTS = [
@@ -568,17 +705,36 @@
     { max: 16, text: "Таких рейсов почти не бывает" },
     { max: 999, text: "Проще собрать под вас отдельный чартер" }
   ];
-  var KEY = "retro-flight-v3";
+  var KEY = "retro-flight-v6";
 
   var picked = document.getElementById("picked");
   var scalesLine = document.getElementById("scales");
+  var metaLine = document.getElementById("meta");
+  var routeLine = document.getElementById("route");
   var found = document.getElementById("found");
   var stubN = document.getElementById("stub-n");
   var verdict = document.getElementById("verdict");
-  var tagRoute = document.getElementById("tag-route");
-  var fromEl = document.getElementById("from");
-  var toEl = document.getElementById("to");
+  var stampsEl = document.getElementById("stamps");
 
+  var STAMPS = [
+    "✈️", "🧳", "🗺️", "🌴", "🎫", "🧭", "🏝️", "🎒", "📸", "🛬", "☕️", "🗿",
+    "🚕", "🪂", "🌋", "🛶", "🦩", "🐫", "🍜", "🏔️", "🛵", "🌅", "🪸", "🧴",
+    "🎡", "🚡", "🥐", "🦭", "⛱️", "🗼"
+  ];
+  var stamps = [];
+
+  function randomStamp() {
+    var free = STAMPS.filter(function (s) { return stamps.indexOf(s) === -1; });
+    var pool = free.length ? free : STAMPS;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  var inputs = {
+    from: document.getElementById("from"),
+    to: document.getElementById("to"),
+    when: document.getElementById("when"),
+    who: document.getElementById("who")
+  };
   var sliders = {
     plan: document.getElementById("sl-plan"),
     tempo: document.getElementById("sl-tempo"),
@@ -591,6 +747,62 @@
   };
   var SEL = ".pill, .seg, .seat, .seat-any, .check, .switch";
 
+  /* ---------- dropdown fields ---------- */
+  function closeAll(except) {
+    document.querySelectorAll(".field").forEach(function (f) {
+      if (f === except) return;
+      f.classList.remove("open");
+      f.querySelector(".options").hidden = true;
+    });
+  }
+
+  document.querySelectorAll(".field").forEach(function (field) {
+    var key = field.getAttribute("data-field");
+    var list = field.querySelector(".options");
+    var input = field.querySelector("input");
+
+    OPTIONS[key].forEach(function (text) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = text;
+      b.addEventListener("click", function () {
+        input.value = text;
+        closeAll();
+        render();
+        input.focus();
+      });
+      list.appendChild(b);
+    });
+
+    function markSelected() {
+      list.querySelectorAll("button").forEach(function (b) {
+        b.setAttribute("aria-selected", b.textContent === input.value ? "true" : "false");
+      });
+    }
+    function open() {
+      closeAll(field);
+      field.classList.add("open");
+      list.hidden = false;
+      markSelected();
+    }
+    function toggle() {
+      if (list.hidden) { open(); } else { closeAll(); }
+    }
+
+    field.querySelector(".caret").addEventListener("click", toggle);
+    input.addEventListener("focus", open);
+    input.addEventListener("input", function () { markSelected(); render(); });
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { closeAll(); input.blur(); }
+      if (e.key === "Enter") { closeAll(); }
+    });
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest(".field")) closeAll();
+  });
+
+  /* ---------- filters ---------- */
   function allControls() {
     return Array.prototype.slice.call(document.querySelectorAll(SEL));
   }
@@ -604,10 +816,36 @@
     for (var i = 0; i < VERDICTS.length; i++) { if (n <= VERDICTS[i].max) return VERDICTS[i].text; }
     return "";
   }
-  function routeText() {
-    var a = fromEl.value.trim() || "Откуда-то";
-    var b = toEl.value.trim() || "Куда-то";
-    return a + " → " + b;
+  function val(key, fallback) {
+    return inputs[key].value.trim() || fallback;
+  }
+
+  function syncStamps(count) {
+    while (stamps.length < count) { stamps.push(randomStamp()); }
+    if (stamps.length > count) { stamps.length = count; }
+    stampsEl.innerHTML = "";
+    if (!stamps.length) {
+      var none = document.createElement("span");
+      none.className = "none";
+      none.textContent = "штампов пока нет";
+      stampsEl.appendChild(none);
+      return;
+    }
+    stamps.forEach(function (s, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = s;
+      b.setAttribute("aria-label", "Поменять штамп");
+      b.addEventListener("click", function () {
+        var was = stamps[i];
+        var next = was;
+        while (next === was) { next = STAMPS[Math.floor(Math.random() * STAMPS.length)]; }
+        stamps[i] = next;
+        syncStamps(stamps.length);
+        save();
+      });
+      stampsEl.appendChild(b);
+    });
   }
 
   function render() {
@@ -632,10 +870,19 @@
       return v;
     });
     scalesLine.textContent = parts.join(" · ");
-    tagRoute.textContent = routeText();
+
+    routeLine.textContent = "";
+    routeLine.appendChild(document.createTextNode(val("from", "Откуда-то") + " "));
+    var arrow = document.createElement("em");
+    arrow.textContent = "→";
+    routeLine.appendChild(arrow);
+    routeLine.appendChild(document.createTextNode(" " + val("to", "Куда-то")));
+
+    metaLine.textContent = "вылет: " + val("when", "когда-нибудь") + "   ·   пассажиры: " + val("who", "я один");
     found.textContent = String(on.length);
     stubN.innerHTML = on.length + "<small>фильтров</small>";
     verdict.textContent = verdictFor(on.length);
+    syncStamps(on.length);
     save();
   }
 
@@ -644,7 +891,9 @@
       localStorage.setItem(KEY, JSON.stringify({
         states: allControls().map(function (c) { return c.getAttribute("aria-pressed"); }),
         plan: sliders.plan.value, tempo: sliders.tempo.value, photo: sliders.photo.value,
-        from: fromEl.value, to: toEl.value
+        from: inputs.from.value, to: inputs.to.value,
+        when: inputs.when.value, who: inputs.who.value,
+        stamps: stamps
       }));
     } catch (e) { /* приватный режим — просто не сохраняем */ }
   }
@@ -661,8 +910,12 @@
       ["plan", "tempo", "photo"].forEach(function (k) {
         if (state[k] != null) sliders[k].value = state[k];
       });
-      if (typeof state.from === "string") fromEl.value = state.from;
-      if (typeof state.to === "string") toEl.value = state.to;
+      ["from", "to", "when", "who"].forEach(function (k) {
+        if (typeof state[k] === "string") inputs[k].value = state[k];
+      });
+      if (Array.isArray(state.stamps)) {
+        stamps = state.stamps.filter(function (s) { return typeof s === "string"; });
+      }
     } catch (e) { /* игнорируем битое состояние */ }
   }
 
@@ -690,7 +943,6 @@
   Object.keys(sliders).forEach(function (k) {
     sliders[k].addEventListener("input", render);
   });
-  [fromEl, toEl].forEach(function (el) { el.addEventListener("input", render); });
 
   document.getElementById("reset").addEventListener("click", function () {
     allControls().forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
