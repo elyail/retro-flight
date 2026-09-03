@@ -331,6 +331,7 @@
     text-transform: uppercase; color: var(--muted);
   }
   .results-head .count b { color: var(--ink); }
+  .results-head .actions { display: flex; gap: 8px; }
   .btn {
     border: 1px solid var(--edge); background: var(--surface);
     border-radius: 999px; padding: 7px 16px; font-size: 12.5px; font-weight: 600;
@@ -609,6 +610,15 @@
   }
   .modal-card .result span { color: var(--muted); font-family: var(--body); font-size: 13px; display: block; }
 
+  #shot-modal .modal-card { width: min(680px, 100%); }
+  .shot-box {
+    border: 1px solid var(--line); border-radius: 10px; overflow: auto;
+    max-height: 56vh; margin-bottom: 16px; background: var(--surface-2); padding: 10px;
+  }
+  .shot-box img { display: block; width: 100%; height: auto; }
+  .shot-actions { display: flex; gap: 8px; justify-content: center; }
+  .shot-actions .btn { text-decoration: none; display: inline-block; }
+
   @media (max-width: 900px) {
     .layout { grid-template-columns: minmax(0, 1fr); }
     .searchbar { grid-template-columns: 1fr 1fr; }
@@ -816,7 +826,10 @@
   <section class="results">
     <div class="results-head">
       <span class="count">Выбрано фильтров: <b id="found">6</b></span>
-      <button class="btn" id="reset">Сбросить</button>
+      <span class="actions">
+        <button class="btn" id="save">Скачать квитанцию</button>
+        <button class="btn" id="reset">Сбросить</button>
+      </span>
     </div>
 
     <article class="ticket">
@@ -848,6 +861,18 @@
   <span>Мин яратам сине, Татарстан</span>
 </div>
 <audio id="song" src="song.mp3" preload="none"></audio>
+
+<div class="modal" id="shot-modal" hidden>
+  <div class="modal-card">
+    <h3>Квитанция готова</h3>
+    <p class="hint">сохрани картинку и кидай в тред</p>
+    <div class="shot-box"><img id="shot-img" alt="Маршрутная квитанция"></div>
+    <div class="shot-actions">
+      <a class="btn" id="shot-dl" download="retro-reis.png">Скачать PNG</a>
+      <button class="btn" id="shot-close" type="button">Закрыть</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal" id="wheel-modal" hidden>
   <div class="modal-card" role="dialog" aria-label="Колесо судьбы">
@@ -1087,6 +1112,13 @@
       a.target = "_blank";
       a.rel = "noopener";
       a.textContent = link.text;
+      a.addEventListener("click", function () {
+        /* уходим слушать на ютуб — свой плеер глушим */
+        if (songEl && !songEl.paused) {
+          songEl.pause();
+          playerBtn.textContent = "▶️";
+        }
+      });
       el.appendChild(a);
     }
     document.body.appendChild(el);
@@ -1146,10 +1178,9 @@
   var playerBtn = document.getElementById("player-btn");
   var songBroken = false;
 
-  function showPlayer(v) { playerEl.hidden = !v || songBroken; }
+  function showPlayer(v) { playerEl.hidden = !v; }
 
   function playSong(manual) {
-    if (songBroken) return;
     var pr = songEl.play();
     playerBtn.textContent = "⏸️";
     if (pr && pr.catch) {
@@ -1171,8 +1202,8 @@
   });
   songEl.addEventListener("ended", function () { playerBtn.textContent = "▶️"; });
   songEl.addEventListener("error", function () {
-    songBroken = true;
-    playerEl.hidden = true;
+    /* файла нет — плеер всё равно показываем, кнопка честно скажет об этом */
+    playerBtn.textContent = "▶️";
   });
 
   var tickerEl = document.querySelector(".ticker");
@@ -1307,7 +1338,10 @@
     if (e.target === wheelModal) wheelModal.hidden = true;
   });
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && !wheelModal.hidden) wheelModal.hidden = true;
+    if (e.key !== "Escape") return;
+    if (!wheelModal.hidden) wheelModal.hidden = true;
+    var shot = document.getElementById("shot-modal");
+    if (shot && !shot.hidden) shot.hidden = true;
   });
 
   var tipTimer = null;
@@ -1530,6 +1564,62 @@
       }
       render();
     });
+  });
+
+  /* сохранение квитанции картинкой */
+  var shotModal = document.getElementById("shot-modal");
+  var shotImg = document.getElementById("shot-img");
+  var shotDl = document.getElementById("shot-dl");
+  var saveBtn = document.getElementById("save");
+  var h2cLoading = false;
+
+  function withHtml2Canvas(cb) {
+    if (window.html2canvas) { cb(); return; }
+    if (h2cLoading) return;
+    h2cLoading = true;
+    var sc = document.createElement("script");
+    sc.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+    sc.onload = function () { h2cLoading = false; cb(); };
+    sc.onerror = function () {
+      h2cLoading = false;
+      saveBtn.textContent = "Скачать квитанцию";
+      snack("Не удалось загрузить сохранялку — сделай скриншот квитанции");
+    };
+    document.head.appendChild(sc);
+  }
+
+  function shootTicket() {
+    var el = document.querySelector(".ticket");
+    var oldTip = document.querySelector(".tip");
+    if (oldTip) oldTip.remove();
+    saveBtn.textContent = "Готовлю…";
+    window.html2canvas(el, {
+      backgroundColor: getComputedStyle(document.body).backgroundColor,
+      scale: Math.min(2, window.devicePixelRatio || 1) * 1.5,
+      logging: false
+    }).then(function (canvas) {
+      var url = canvas.toDataURL("image/png");
+      shotImg.src = url;
+      shotDl.href = url;
+      shotDl.download = "retro-reis-" + (inputs.to.value.trim().slice(0, 20) || "kvitanciya") + ".png";
+      shotModal.hidden = false;
+      saveBtn.textContent = "Скачать квитанцию";
+    }).catch(function () {
+      saveBtn.textContent = "Скачать квитанцию";
+      snack("Не получилось сохранить — сделай скриншот квитанции");
+    });
+  }
+
+  saveBtn.addEventListener("click", function () {
+    saveBtn.textContent = "Готовлю…";
+    withHtml2Canvas(shootTicket);
+  });
+
+  document.getElementById("shot-close").addEventListener("click", function () {
+    shotModal.hidden = true;
+  });
+  shotModal.addEventListener("click", function (e) {
+    if (e.target === shotModal) shotModal.hidden = true;
   });
 
   document.getElementById("reset").addEventListener("click", function () {
